@@ -1,4 +1,4 @@
-package springapp.mvc.REST;
+package rest;
 
 import org.springframework.stereotype.Component;
 
@@ -9,16 +9,16 @@ import javax.ws.rs.core.MediaType;
 
 @Component
 @Path("/")
-public class DefaultREST {
-	
-	@GET
-	@Produces(MediaType.TEXT_HTML)
-	public String getClient(){
+public class DefaultRest {
+
+    @GET
+    @Produces(MediaType.TEXT_HTML)
+    public String getClient() {
         StringBuffer stringBuffer = new StringBuffer();
         stringBuffer.append("<html><title>Hello</title><body><h3>");
         stringBuffer.append("HI");
         stringBuffer.append("</body></h3></html>");
-		
-		return stringBuffer.toString();
-}
+
+        return stringBuffer.toString();
+    }
 }

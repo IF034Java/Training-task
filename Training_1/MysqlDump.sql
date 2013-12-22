@@ -4,7 +4,7 @@ USE `training1`;
 --
 -- Host: localhost    Database: training1
 -- ------------------------------------------------------
--- Server version	5.6.15
+-- Server version	5.5.30
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -18,57 +18,82 @@ USE `training1`;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `clients`
+-- Table structure for table `client`
 --
 
-DROP TABLE IF EXISTS `clients`;
+DROP TABLE IF EXISTS `client`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `clients` (
+CREATE TABLE `client` (
   `ID` int(11) NOT NULL AUTO_INCREMENT,
-  `NAME` varchar(45) NOT NULL,
-  `SURNAME` varchar(45) NOT NULL,
+  `NAME` varchar(255) NOT NULL,
   `PROFIT` double NOT NULL,
-  PRIMARY KEY (`ID`),
-  UNIQUE KEY `id_UNIQUE` (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
+  `SURNAME` varchar(255) NOT NULL,
+  PRIMARY KEY (`ID`)
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `clients`
+-- Dumping data for table `client`
 --
 
-LOCK TABLES `clients` WRITE;
-/*!40000 ALTER TABLE `clients` DISABLE KEYS */;
-INSERT INTO `clients` VALUES (1,'Vitaliy','Kryzhalko',1.5),(2,'Taras','Kryzhalko',2.9),(3,'Yaroslav','Kovbas',5);
-/*!40000 ALTER TABLE `clients` ENABLE KEYS */;
+LOCK TABLES `client` WRITE;
+/*!40000 ALTER TABLE `client` DISABLE KEYS */;
+INSERT INTO `client` VALUES (1,'VItaliy',5.12,'Kryzhalko'),(2,'Volodumur',2.15,'Dunec'),(3,'Igor',3.48,'Petriv'),(4,'Vasyl',15.32,'Maxumiv'),(5,'Vitaliy1',9.29,'Kryzhalko1'),(6,'Andriy',100.52,'Chumak');
+/*!40000 ALTER TABLE `client` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
--- Table structure for table `products`
+-- Table structure for table `client_product`
 --
 
-DROP TABLE IF EXISTS `products`;
+DROP TABLE IF EXISTS `client_product`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `products` (
-  `ID` int(11) NOT NULL,
-  `NAME` varchar(45) NOT NULL,
-  `EXPERATION_DATE` varchar(45) NOT NULL,
-  `PRICE` double NOT NULL,
-  PRIMARY KEY (`ID`),
-  UNIQUE KEY `idnew_table_UNIQUE` (`ID`)
+CREATE TABLE `client_product` (
+  `PRODUCT_ID` int(11) NOT NULL,
+  `CLIENT_ID` int(11) NOT NULL,
+  KEY `FK_cx34kldsadcrc23p8xorq9jd` (`CLIENT_ID`),
+  KEY `FK_fh732v5vl84nm81o6bsrh7grm` (`PRODUCT_ID`),
+  CONSTRAINT `FK_cx34kldsadcrc23p8xorq9jd` FOREIGN KEY (`CLIENT_ID`) REFERENCES `client` (`ID`),
+  CONSTRAINT `FK_fh732v5vl84nm81o6bsrh7grm` FOREIGN KEY (`PRODUCT_ID`) REFERENCES `product` (`ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `products`
+-- Dumping data for table `client_product`
 --
 
-LOCK TABLES `products` WRITE;
-/*!40000 ALTER TABLE `products` DISABLE KEYS */;
-INSERT INTO `products` VALUES (1,'Bread','18.12.2013',2.55),(2,'Beer','29.12.2013',7.12),(3,'Fish','25.12.2013',30),(4,'Milk','20.12.2013',9.7);
-/*!40000 ALTER TABLE `products` ENABLE KEYS */;
+LOCK TABLES `client_product` WRITE;
+/*!40000 ALTER TABLE `client_product` DISABLE KEYS */;
+INSERT INTO `client_product` VALUES (1,1);
+/*!40000 ALTER TABLE `client_product` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `product`
+--
+
+DROP TABLE IF EXISTS `product`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `product` (
+  `ID` int(11) NOT NULL AUTO_INCREMENT,
+  `EXPERATION_DATE` varchar(255) NOT NULL,
+  `NAME` varchar(255) NOT NULL,
+  `PRICE` double NOT NULL,
+  PRIMARY KEY (`ID`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `product`
+--
+
+LOCK TABLES `product` WRITE;
+/*!40000 ALTER TABLE `product` DISABLE KEYS */;
+INSERT INTO `product` VALUES (1,'20.12.13','Bread',5.12),(2,'21.12.13','Milk',3.12),(3,'22.12.13','Beer',4.16),(4,'22.12.13','food',54.12);
+/*!40000 ALTER TABLE `product` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -80,4 +105,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2013-12-18 11:14:47
+-- Dump completed on 2013-12-22 23:08:09

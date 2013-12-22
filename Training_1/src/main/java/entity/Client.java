@@ -1,15 +1,22 @@
-package springapp.mvc.entity;
+package entity;
 
+import java.util.List;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "CLIENTS")
-public class Clients {
+@Table(name = "CLIENT")
+public class Client {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID", unique = true, nullable = false)
@@ -22,9 +29,16 @@ public class Clients {
     private String surname;
 
     @Column(name = "PROFIT", nullable = false)
-    private Double profit;    
+    private Double profit;
 
-    public Clients() {
+    @ManyToMany(mappedBy = "clients", fetch = FetchType.LAZY, cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+    /*@JoinTable(
+            name = "CLIENT_PRODUCT",
+            joinColumns = {@JoinColumn(name = "PRODUCT_ID", referencedColumnName = "ID")},
+            inverseJoinColumns = {@JoinColumn(name = "CLIENT_ID", referencedColumnName = "ID")})*/
+    private List<Product> products;
+
+    public Client() {
     }
 
     public Integer getId() {
@@ -58,5 +72,13 @@ public class Clients {
     public void setProfit(Double profit) {
         this.profit = profit;
     }
-    
+
+    public List<Product> getProducts() {
+        return products;
+    }
+
+    public void setProducts(List<Product> products) {
+        this.products = products;
+    }
+
 }

@@ -1,43 +1,43 @@
 <web-app version="2.4"
-	xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee 
+         xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee
 	http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
 
     <display-name>Spring MVC Application</display-name>
 
     <servlet>
-		<servlet-name>mvc-dispatcher</servlet-name>
-			<servlet-class>
-                com.sun.jersey.spi.spring.container.servlet.SpringServlet
-     		</servlet-class>
-			<init-param>
-					<param-name>
-							com.sun.jersey.config.property.packages
-					</param-name>
-					<param-value>
-							springapp.mvc.REST
-					</param-value>
-			</init-param>
+        <servlet-name>mvc-dispatcher</servlet-name>
+        <servlet-class>
+            com.sun.jersey.spi.spring.container.servlet.SpringServlet
+        </servlet-class>
+        <init-param>
+            <param-name>
+                com.sun.jersey.config.property.packages
+            </param-name>
+            <param-value>
+                rest
+            </param-value>
+        </init-param>
         <init-param>
             <param-name>com.sun.jersey.api.json.POJOMappingFeature</param-name>
             <param-value>true</param-value>
         </init-param>
         <load-on-startup>1</load-on-startup>
-	</servlet>
+    </servlet>
 
-	<servlet-mapping>
-		<servlet-name>mvc-dispatcher</servlet-name>
-		<url-pattern>/</url-pattern>
-	</servlet-mapping>
-	
-	<context-param>
-	<param-name>contextConfigLocation</param-name>
-	<param-value>/WEB-INF/mvc-dispatcher-servlet.xml</param-value>
-  </context-param>
- 
-  <listener>
-       <listener-class>
-          org.springframework.web.context.ContextLoaderListener
-       </listener-class>
-  </listener>
+    <servlet-mapping>
+        <servlet-name>mvc-dispatcher</servlet-name>
+        <url-pattern>/</url-pattern>
+    </servlet-mapping>
+
+    <context-param>
+        <param-name>contextConfigLocation</param-name>
+        <param-value>/WEB-INF/mvc-dispatcher-servlet.xml</param-value>
+    </context-param>
+
+    <listener>
+        <listener-class>
+            org.springframework.web.context.ContextLoaderListener
+        </listener-class>
+    </listener>
 </web-app>

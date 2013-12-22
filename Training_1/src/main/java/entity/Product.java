@@ -1,16 +1,23 @@
-package springapp.mvc.entity;
+package entity;
 
 
+import java.util.List;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "PRODUCTS")
-public class Products {
+@Table(name = "PRODUCT")
+public class Product {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,9 +31,16 @@ public class Products {
     private Double price;
 
     @Column(name = "EXPERATION_DATE", nullable = false)
-    private String expirationDate;    
+    private String expirationDate;
 
-    public Products() {
+    @ManyToMany(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}, fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "CLIENT_PRODUCT",
+            joinColumns = {@JoinColumn(name = "PRODUCT_ID", referencedColumnName = "ID")},
+            inverseJoinColumns = {@JoinColumn(name = "CLIENT_ID", referencedColumnName = "ID")})
+    private List<Client> clients;
+
+    public Product() {
     }
 
     public Integer getId() {
@@ -60,5 +74,13 @@ public class Products {
     public void setExpirationDate(String expirationDate) {
         this.expirationDate = expirationDate;
     }
-    
+
+    public List<Client> getClients() {
+        return clients;
+    }
+
+    public void setClients(List<Client> clients) {
+        this.clients = clients;
+    }
+
 }
