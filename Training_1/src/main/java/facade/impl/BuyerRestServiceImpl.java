@@ -1,19 +1,21 @@
 package facade.impl;
 
+import java.util.LinkedList;
+import java.util.List;
+
+import javax.ws.rs.core.Response;
+
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+
+import service.ClientService;
 import dto.ClientDto;
 import dto.ProductDto;
 import entity.Client;
 import entity.Product;
 import facade.BuyerRestService;
-import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
-import service.ClientService;
-
-import javax.ws.rs.core.Response;
-import java.util.LinkedList;
-import java.util.List;
 
 @Transactional
 @Component
@@ -67,7 +69,7 @@ public class BuyerRestServiceImpl implements BuyerRestService {
     @Override
     public Response deleteClient(String clientId) {
         if (clientService.isClientExist(Integer.valueOf(clientId))) {
-            List<Product> products = clientService.getClient(Integer.valueOf(clientId)).getProducts();
+        	List<Product> products = clientService.getClient(Integer.valueOf(clientId)).getProducts();
             for(Product product : products){
                 product.getClients().remove(clientService.getClient(Integer.valueOf(clientId)));
             }
@@ -80,9 +82,23 @@ public class BuyerRestServiceImpl implements BuyerRestService {
     }
 
     @Override
-    public Response addClient(Client client) {
+    public Response addClient(Client client) {    	
         clientService.addClient(client);
         return Response.status(Response.Status.CREATED).build();
     }
+
+	@Override
+	public List<ClientDto> getProfitableClients() {
+		List<Client> clients = clientService.getProfitableClients();
+        List<ClientDto> clientDtos = new LinkedList<ClientDto>();
+        ModelMapper mapper = new ModelMapper();
+        for(Client client: clients){
+            List<Product> products = client.getProducts();
+            ClientDto clientDto = mapper.map(client, ClientDto.class);
+            clientDto.setProductDtos(productDtoMapper(products));
+            clientDtos.add(clientDto);
+        }
+        return clientDtos;			
+	}
 
 }

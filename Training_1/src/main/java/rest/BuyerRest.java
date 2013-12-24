@@ -1,10 +1,6 @@
 package rest;
 
-import dto.ClientDto;
-import entity.Client;
-import facade.BuyerRestService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import java.util.List;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -15,9 +11,15 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.List;
 
-@Component
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import dto.ClientDto;
+import entity.Client;
+import facade.BuyerRestService;
+
+@Component(value = "customerRESTGateway")
 @Path("/Client")
 public class BuyerRest {
 
@@ -48,5 +50,4 @@ public class BuyerRest {
     public Response addClient(Client client) {
         return buyerRestService.addClient(client);
     }
-
 }

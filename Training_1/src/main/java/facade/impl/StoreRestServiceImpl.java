@@ -1,19 +1,24 @@
 package facade.impl;
 
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+
+import javax.ws.rs.core.Response;
+
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.CleanupFailureDataAccessException;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+
+import service.ClientService;
+import service.ProductService;
 import dto.ClientDto;
 import dto.ProductDto;
 import entity.Client;
 import entity.Product;
 import facade.StoreRestService;
-import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
-import service.ProductService;
-
-import javax.ws.rs.core.Response;
-import java.util.LinkedList;
-import java.util.List;
 
 @Transactional
 @Component
@@ -21,7 +26,12 @@ public class StoreRestServiceImpl implements StoreRestService {
 
     @Autowired
     private ProductService productService;
+    
+    @Autowired
+    private ClientService clientService;
 
+    ModelMapper mapper = new ModelMapper();
+    
     @Override
     public List<ClientDto> clientDtoMapper(List<Client> clients){
     	ModelMapper mapper = new ModelMapper();
@@ -52,7 +62,6 @@ public class StoreRestServiceImpl implements StoreRestService {
     public List<ProductDto> getAllProducts() {
         List<Product> products = productService.getAllProducts();
     	List<ProductDto> productDtos = new LinkedList<ProductDto>();
-    	ModelMapper mapper = new ModelMapper();
     	for(Product product: products){
     		List<Client> clients = product.getClients();    		
     		ProductDto productDto = mapper.map(product, ProductDto.class);
@@ -65,6 +74,10 @@ public class StoreRestServiceImpl implements StoreRestService {
     @Override
     public Response deleteProduct(String productId) {
         if (productService.isProductExist(Integer.valueOf(productId))) {
+        	List<Client> clients = productService.getProduct(Integer.valueOf(productId)).getClients();
+            for(Client client : clients){
+            	client.getProducts().remove(productService.getProduct(Integer.valueOf(productId)));                
+            }
             productService.deleteProduct(Integer.valueOf(productId));
             return Response.status(Response.Status.OK).build();
         } else {
@@ -73,10 +86,17 @@ public class StoreRestServiceImpl implements StoreRestService {
     }
 
     @Override
-    public Response addProduct(Product product) {
-        productService.addProduct(product);
-        return Response.status(Response.Status.CREATED).build();
+    public Product addProduct(ProductDto productDto) {
+    	List<Client> clients = new ArrayList<Client>();
+    	if(productDto.getClientDtos()!=null){
+    		for (ClientDto clientDto: productDto.getClientDtos()){
+    			Client client = mapper.map(clientDto, Client.class);
+                clientService.addClient(client);
+    			clients.add(client);
+    		}
+    	}
+        Product product = mapper.map(productDto, Product.class);
+    	product.setClients(clients);
+        return productService.addProduct(product);
     }
-
-
 }

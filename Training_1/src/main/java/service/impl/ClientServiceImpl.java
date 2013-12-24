@@ -47,4 +47,9 @@ public class ClientServiceImpl implements ClientService {
         return clientRepository.exists(id);
     }
 
+	@Override
+	public List<Client> getProfitableClients() {		
+		return clientRepository.getProfitableClients();
+	}
+
 }

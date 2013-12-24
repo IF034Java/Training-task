@@ -33,11 +33,11 @@ public class Product {
     @Column(name = "EXPERATION_DATE", nullable = false)
     private String expirationDate;
 
-    @ManyToMany(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}, fetch = FetchType.LAZY)
+    @ManyToMany(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.PERSIST}, fetch = FetchType.LAZY)
     @JoinTable(
             name = "CLIENT_PRODUCT",
             joinColumns = {@JoinColumn(name = "PRODUCT_ID", referencedColumnName = "ID")},
-            inverseJoinColumns = {@JoinColumn(name = "CLIENT_ID", referencedColumnName = "ID")})
+            inverseJoinColumns = {@JoinColumn(name = "CLIENT_ID", referencedColumnName = "ID")})    
     private List<Client> clients;
 
     public Product() {

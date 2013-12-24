@@ -1,12 +1,13 @@
 package facade;
 
+import java.util.List;
+
+import javax.ws.rs.core.Response;
+
 import dto.ClientDto;
 import dto.ProductDto;
 import entity.Client;
 import entity.Product;
-
-import javax.ws.rs.core.Response;
-import java.util.List;
 
 public interface StoreRestService {
     List<ClientDto> clientDtoMapper(List<Client> clients);
@@ -17,5 +18,5 @@ public interface StoreRestService {
 
     Response deleteProduct(String productId);
 
-    Response addProduct(Product product);
+    Product addProduct(ProductDto productDto);
 }

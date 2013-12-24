@@ -16,4 +16,6 @@ public interface ClientService {
     List<Client> getAllClients();
 
     boolean isClientExist(int id);
+    
+    List<Client> getProfitableClients();
 }

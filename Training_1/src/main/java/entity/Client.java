@@ -31,11 +31,11 @@ public class Client {
     @Column(name = "PROFIT", nullable = false)
     private Double profit;
 
-    @ManyToMany(mappedBy = "clients", fetch = FetchType.LAZY, cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
-    /*@JoinTable(
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.PERSIST})
+    @JoinTable(
             name = "CLIENT_PRODUCT",
             joinColumns = {@JoinColumn(name = "PRODUCT_ID", referencedColumnName = "ID")},
-            inverseJoinColumns = {@JoinColumn(name = "CLIENT_ID", referencedColumnName = "ID")})*/
+            inverseJoinColumns = {@JoinColumn(name = "CLIENT_ID", referencedColumnName = "ID")})    
     private List<Product> products;
 
     public Client() {
