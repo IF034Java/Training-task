@@ -16,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import dto.ClientDto;
-import entity.Client;
 import facade.BuyerRestService;
 
 @Component(value = "customerRESTGateway")
@@ -47,7 +46,13 @@ public class BuyerRest {
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response addClient(Client client) {
-        return buyerRestService.addClient(client);
+    public Response addClient(ClientDto clientDto) {
+    	Response.Status status = null;    	
+    	if (buyerRestService.addClient(clientDto) == null){
+    		status = Response.Status.UNAUTHORIZED;
+    	} else {
+    		status =Response.Status.ACCEPTED;
+    	}
+        return Response.status(status).build();    
     }
 }

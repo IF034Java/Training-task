@@ -18,7 +18,7 @@ public interface BuyerRestService {
 
     Response deleteClient(String clientId);
 
-    Response addClient(Client client);
+    Client addClient(ClientDto clientDto);
     
     List<ClientDto> getProfitableClients();
 }

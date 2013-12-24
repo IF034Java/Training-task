@@ -8,7 +8,6 @@ import javax.ws.rs.core.Response;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.CleanupFailureDataAccessException;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -88,8 +87,11 @@ public class StoreRestServiceImpl implements StoreRestService {
     @Override
     public Product addProduct(ProductDto productDto) {
     	List<Client> clients = new ArrayList<Client>();
+    	List<ProductDto> productDtos = new ArrayList<ProductDto>();
+    	productDtos.add(productDto);
     	if(productDto.getClientDtos()!=null){
     		for (ClientDto clientDto: productDto.getClientDtos()){
+    			clientDto.setProductDtos(productDtos);
     			Client client = mapper.map(clientDto, Client.class);
                 clientService.addClient(client);
     			clients.add(client);

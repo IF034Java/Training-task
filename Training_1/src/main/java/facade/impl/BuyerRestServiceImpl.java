@@ -1,5 +1,6 @@
 package facade.impl;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import service.ClientService;
+import service.ProductService;
 import dto.ClientDto;
 import dto.ProductDto;
 import entity.Client;
@@ -23,6 +25,11 @@ public class BuyerRestServiceImpl implements BuyerRestService {
 
     @Autowired
     private ClientService clientService;
+    
+    @Autowired
+    private ProductService productService;
+    
+    ModelMapper mapper = new ModelMapper();
     
     @Override
     public List<ProductDto> productDtoMapper(List<Product> products){
@@ -82,9 +89,21 @@ public class BuyerRestServiceImpl implements BuyerRestService {
     }
 
     @Override
-    public Response addClient(Client client) {    	
-        clientService.addClient(client);
-        return Response.status(Response.Status.CREATED).build();
+    public Client addClient(ClientDto clientDto) {
+    	List<Product> products = new ArrayList<Product>();
+    	List<ClientDto> clientDtos = new ArrayList<ClientDto>();
+    	clientDtos.add(clientDto);
+    	if(clientDto.getProductDtos()!=null){
+    		for(ProductDto productDto : clientDto.getProductDtos()){
+    			productDto.setClientDtos(clientDtos);
+    			Product product = mapper.map(productDto, Product.class);
+    			productService.addProduct(product);
+    			products.add(product);
+    		}
+    	}
+    	Client client = mapper.map(clientDto, Client.class);
+    	client.setProducts(products);               
+        return clientService.addClient(client);
     }
 
 	@Override
