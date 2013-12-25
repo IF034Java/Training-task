@@ -1,5 +1,9 @@
 package config;
 
+import java.util.Properties;
+
+import javax.persistence.EntityManagerFactory;
+import javax.sql.DataSource;
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.ext.RuntimeDelegate;
@@ -15,18 +19,27 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
-import org.springframework.context.annotation.ImportResource;
+import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.jdbc.datasource.DriverManagerDataSource;
+import org.springframework.orm.jpa.JpaTransactionManager;
+import org.springframework.orm.jpa.JpaVendorAdapter;
+import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
+import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.transaction.annotation.TransactionManagementConfigurer;
 
-import facade.BuyerRestService;
-import facade.StoreRestService;
 import rest.BuyerRest;
 import rest.ProfitableClientsRest;
 import rest.StoreRest;
 
 @Configuration
-@ImportResource({"/WEB-INF/data.xml", "classpath:META-INF/cxf/cxf.xml", "classpath:META-INF/cxf/cxf-servlet.xml"})
+//@ImportResource({"/WEB-INF/data.xml"})
 @ComponentScan(basePackages = {"facade.impl", "service.impl", "entity", "rest", "repo"})
-public class AppConfig {
+@EnableJpaRepositories("repo")
+@EnableTransactionManagement
+public class AppConfig{
 	
 	@Autowired
 	private BuyerRest buyerRest;
@@ -70,6 +83,49 @@ public class AppConfig {
         factory.setAddress("/rest"+ factory.getAddress());
         factory.setProvider(jsonProvider());
         return factory.create();
-    }		
+    }
+	
+	@Bean
+	public DataSource dataSource(){
+      DriverManagerDataSource dataSource = new DriverManagerDataSource();
+      dataSource.setDriverClassName("com.mysql.jdbc.Driver");
+      dataSource.setUrl("jdbc:mysql://localhost:3306/training1");
+      dataSource.setUsername( "training" );
+      dataSource.setPassword( "training" );
+      return dataSource;
+	}
+	
+	@Bean
+	public PersistenceExceptionTranslationPostProcessor exceptionTranslation(){
+		return new PersistenceExceptionTranslationPostProcessor();
+	}
+	
+	private Properties additionalProperties(){
+		Properties properties = new Properties();
+		properties.setProperty("hibernate.hbm2ddl.auto", "validate");
+		properties.setProperty("hibernate.dialect", "org.hibernate.dialect.MySQL5InnoDBDialect");
 		
+		return properties;
+	}
+	
+	@Bean
+	   public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
+	      LocalContainerEntityManagerFactoryBean entityManagerFactoryBean = new LocalContainerEntityManagerFactoryBean();
+	      entityManagerFactoryBean.setDataSource(dataSource());
+	      entityManagerFactoryBean.setPackagesToScan("entity");
+	      JpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
+	      entityManagerFactoryBean.setJpaVendorAdapter(vendorAdapter);
+	      entityManagerFactoryBean.setJpaProperties(additionalProperties());
+	 
+	      return entityManagerFactoryBean;
+	   }
+	
+	@Bean
+	   public PlatformTransactionManager transactionManager(EntityManagerFactory emf){
+	      JpaTransactionManager transactionManager = new JpaTransactionManager();
+	      transactionManager.setEntityManagerFactory(emf);
+	 
+	      return transactionManager;
+	   }
+	    		
 }
