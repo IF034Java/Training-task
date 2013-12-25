@@ -13,8 +13,8 @@ import org.springframework.stereotype.Component;
 import dto.ClientDto;
 import facade.BuyerRestService;
 
-@Component(value = "profitableRESTGateway")
-@Path("/ProfitableClients")
+@Component
+@Path("/profitableClients")
 public class ProfitableClientsRest {
 	
 	@Autowired 

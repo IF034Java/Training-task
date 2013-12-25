@@ -18,8 +18,8 @@ import org.springframework.stereotype.Component;
 import dto.ProductDto;
 import facade.StoreRestService;
 
-@Component(value = "storeRESTGateway")
-@Path("/Product")
+@Component
+@Path("/product")
 public class StoreRest {
 
     @Autowired

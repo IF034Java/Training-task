@@ -18,8 +18,8 @@ import org.springframework.stereotype.Component;
 import dto.ClientDto;
 import facade.BuyerRestService;
 
-@Component(value = "customerRESTGateway")
-@Path("/Client")
+@Component
+@Path("/client")
 public class BuyerRest {
 
     @Autowired

@@ -31,10 +31,11 @@
         </dependency>
 
         <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>servlet-api</artifactId>
-            <version>2.5</version>
-        </dependency>
+  			<groupId>javax.servlet</groupId>
+  			<artifactId>javax.servlet-api</artifactId>
+  			<version>3.0.1</version>
+ 			<scope>provided</scope>
+		</dependency>
 
         <dependency>
             <groupId>javax.servlet.jsp</groupId>
@@ -61,7 +62,7 @@
             <version>${spring.version}</version>
             <scope>test</scope>
         </dependency>
-
+        
         <dependency>
             <groupId>org.springframework.data</groupId>
             <artifactId>spring-data-jpa</artifactId>
@@ -73,7 +74,13 @@
     		<artifactId>spring-integration-xml</artifactId>
     		<version>2.2.3.RELEASE</version>
 		</dependency>
-
+		
+		<dependency>
+			<groupId>org.springframework.javaconfig</groupId>
+			<artifactId>spring-javaconfig</artifactId>
+			<version>1.0.0.m3</version>
+		</dependency>
+                                    
         <dependency>
             <groupId>org.hibernate.javax.persistence</groupId>
             <artifactId>hibernate-jpa-2.0-api</artifactId>
@@ -116,7 +123,7 @@
             <version>2.2</version>
         </dependency>
 		
-		<dependency>
+		<!-- <dependency>
 			<groupId>com.sun.jersey</groupId>
 			<artifactId>jersey-server</artifactId>
 			<version>1.8</version>
@@ -126,7 +133,7 @@
             <groupId>com.sun.jersey</groupId>
             <artifactId>jersey-json</artifactId>
             <version>1.8</version>
-        </dependency>
+        </dependency> -->
         
         <dependency>
 			<groupId>org.modelmapper</groupId>
@@ -135,7 +142,7 @@
 		</dependency>
             
 
-        <dependency>
+        <!-- <dependency>
             <groupId>com.sun.jersey.contribs</groupId>
             <artifactId>jersey-spring</artifactId>
             <version>1.8</version>
@@ -161,7 +168,7 @@
                     <artifactId>spring-context</artifactId>
                 </exclusion>
             </exclusions>
-        </dependency>
+        </dependency> -->
 		
 		<dependency>
 			<groupId>net.sourceforge.jtds</groupId>
@@ -206,14 +213,21 @@
             <groupId>org.codehaus.jackson</groupId>
             <artifactId>jackson-mapper-asl</artifactId>
             <version>1.9.13</version>
-        </dependency>        
+        </dependency>
+        
+        <dependency>
+			<groupId>org.codehaus.jackson</groupId>
+			<artifactId>jackson-jaxrs</artifactId>
+			<version>1.9.13</version>
+		</dependency>
+                    
 
         <dependency>
 			<groupId>com.fasterxml.jackson.jaxrs</groupId>
 			<artifactId>jackson-jaxrs-json-provider</artifactId>
 			<version>2.3.0</version>
-		</dependency>
-            			
+		</dependency>		
+                        			
 
         <dependency>
             <groupId>junit</groupId>
