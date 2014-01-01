@@ -76,7 +76,7 @@ public class AppConfig{
 	
 	@Bean
 	@DependsOn("cxf")
-    public Server jaxRsServer(ApplicationContext appContext) {
+    public Server jaxRsServer() {
         JAXRSServerFactoryBean factory = RuntimeDelegate.getInstance().createEndpoint(jaxRsApiApplication(), JAXRSServerFactoryBean.class);
         factory.setServiceBean(buyerRest);
         factory.setServiceBean(profitableClientsRest);

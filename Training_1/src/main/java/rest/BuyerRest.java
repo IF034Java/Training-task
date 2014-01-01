@@ -1,6 +1,11 @@
 package rest;
 
-import java.util.List;
+import dto.ClientDto;
+import facade.BuyerRestService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -11,16 +16,13 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
-import dto.ClientDto;
-import facade.BuyerRestService;
+import java.util.List;
 
 @Component
 @Path("/client")
 public class BuyerRest {
+
+    private final static Logger LOGGER = LoggerFactory.getLogger(BuyerRest.class);
 
     @Autowired
     private BuyerRestService buyerRestService;
@@ -29,6 +31,7 @@ public class BuyerRest {
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public ClientDto getClient(@PathParam("id") String clientId) {
+        LOGGER.trace("get client " + buyerRestService.getClient(clientId));
         return buyerRestService.getClient(clientId);
     }
 
