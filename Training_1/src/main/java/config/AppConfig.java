@@ -19,6 +19,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
+import org.springframework.context.annotation.ImportResource;
 import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
@@ -35,10 +36,10 @@ import rest.ProfitableClientsRest;
 import rest.StoreRest;
 
 @Configuration
-//@ImportResource({"/WEB-INF/data.xml"})
+@ImportResource({"/WEB-INF/data.xml"})
 @ComponentScan(basePackages = {"facade.impl", "service.impl", "entity", "rest", "repo"})
-@EnableJpaRepositories("repo")
-@EnableTransactionManagement
+//@EnableJpaRepositories("repo")
+//@EnableTransactionManagement
 public class AppConfig{
 	
 	@Autowired
@@ -85,7 +86,7 @@ public class AppConfig{
         return factory.create();
     }
 	
-	@Bean
+	/*@Bean
 	public DataSource dataSource(){
       DriverManagerDataSource dataSource = new DriverManagerDataSource();
       dataSource.setDriverClassName("com.mysql.jdbc.Driver");
@@ -126,6 +127,6 @@ public class AppConfig{
 	      transactionManager.setEntityManagerFactory(emf);
 	 
 	      return transactionManager;
-	   }
+	   }*/
 	    		
 }
