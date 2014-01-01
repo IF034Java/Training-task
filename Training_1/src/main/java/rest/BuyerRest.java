@@ -12,6 +12,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -21,6 +22,7 @@ import facade.BuyerRestService;
 @Component
 @Path("/client")
 public class BuyerRest {
+     private final static Logger LOGGER = Logger.getLogger(BuyerRest.class);
 
     @Autowired
     private BuyerRestService buyerRestService;
@@ -29,6 +31,7 @@ public class BuyerRest {
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public ClientDto getClient(@PathParam("id") String clientId) {
+        LOGGER.debug(buyerRestService.getClient(clientId));
         return buyerRestService.getClient(clientId);
     }
 
