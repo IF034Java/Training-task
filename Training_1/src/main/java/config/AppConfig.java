@@ -27,6 +27,11 @@ import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.web.context.AbstractSecurityWebApplicationInitializer;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.TransactionManagementConfigurer;
@@ -40,7 +45,24 @@ import rest.StoreRest;
 @ComponentScan(basePackages = {"facade.impl", "service.impl", "entity", "rest", "repo"})
 //@EnableJpaRepositories("repo")
 //@EnableTransactionManagement
-public class AppConfig{
+@EnableWebSecurity
+public class AppConfig extends WebSecurityConfigurerAdapter{		 
+	 
+	@Override
+	@Autowired
+    protected void configure(AuthenticationManagerBuilder authManagerBuilder) throws Exception {
+        authManagerBuilder.inMemoryAuthentication()
+                .withUser("123").password("123").roles("USER");
+
+        authManagerBuilder.inMemoryAuthentication()
+                .withUser("manager").password("password").roles("MANAGER");
+    }
+	
+	/*@Override
+	protected void configure(HttpSecurity http) throws Exception {
+		http.authorizeRequests().antMatchers("/rest/**").hasRole("USER").anyRequest().authenticated().and().formLogin();		 
+		 
+	}*/	 	 
 	
 	@Autowired
 	private BuyerRest buyerRest;

@@ -1,4 +1,11 @@
 #IDEA#
 Training_1/.idea
 Training_1/Training_1.iml
+
+#Eclipse#
+Training_1/.settings
+Training_1/.classpath
+Training_1/.project
+
+#Building sources#
 target
