@@ -43,7 +43,7 @@ import rest.StoreRest;
 
 @Configuration
 @ImportResource({"/WEB-INF/data.xml"})
-@ComponentScan(basePackages = {"facade.impl", "service.impl", "entity", "rest", "repo"})
+@ComponentScan(basePackages = {"facade.impl", "service.impl", "entity",  "repo"})
 //@EnableJpaRepositories("repo")
 //@EnableTransactionManagement
 @EnableWebSecurity
@@ -74,14 +74,15 @@ public class AppConfig extends WebSecurityConfigurerAdapter{
 		return new BuyerRest();
 	}
 	
-	/*@Autowired
-	private BuyerRest buyerRest;*/
+	@Bean
+	public ProfitableClientsRest profitableClientsRest(){
+		return new ProfitableClientsRest();
+	}
 	
-	@Autowired
-	private ProfitableClientsRest profitableClientsRest;
-	
-	@Autowired
-	private StoreRest storeRest;	
+	@Bean
+	public StoreRest storeRest(){
+		return new StoreRest();
+	}		
 	
 	@ApplicationPath(value = "/")
     public class JaxRsApiApplication extends Application { }
@@ -111,8 +112,8 @@ public class AppConfig extends WebSecurityConfigurerAdapter{
     public Server jaxRsServer() {
         JAXRSServerFactoryBean factory = RuntimeDelegate.getInstance().createEndpoint(jaxRsApiApplication(), JAXRSServerFactoryBean.class);
         factory.setServiceBean(buyerRest());
-        factory.setServiceBean(profitableClientsRest);
-        factory.setServiceBean(storeRest);
+        factory.setServiceBean(profitableClientsRest());
+        factory.setServiceBean(storeRest());
         factory.setAddress("/rest"+ factory.getAddress());
         factory.setProvider(jsonProvider());
         return factory.create();

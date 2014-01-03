@@ -8,12 +8,10 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import dto.ClientDto;
 import facade.BuyerRestService;
 
-@Component
 @Path("/profitableClients")
 public class ProfitableClientsRest {
 	
