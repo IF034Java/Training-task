@@ -1,11 +1,6 @@
 package rest;
 
-import dto.ClientDto;
-import facade.BuyerRestService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import java.util.List;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -16,7 +11,16 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.stereotype.Component;
+
+import dto.ClientDto;
+import facade.BuyerRestService;
 
 @Component
 @Path("/client")
@@ -30,6 +34,7 @@ public class BuyerRest {
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ClientDto getClient(@PathParam("id") String clientId) {
         LOGGER.trace("get client " + buyerRestService.getClient(clientId));
         return buyerRestService.getClient(clientId);

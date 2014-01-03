@@ -28,6 +28,7 @@ import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -46,27 +47,35 @@ import rest.StoreRest;
 //@EnableJpaRepositories("repo")
 //@EnableTransactionManagement
 @EnableWebSecurity
-public class AppConfig extends WebSecurityConfigurerAdapter{		 
-	 
+@EnableGlobalMethodSecurity(prePostEnabled = true)
+public class AppConfig extends WebSecurityConfigurerAdapter{		
+	
+	@Override	
+	protected void configure(HttpSecurity http) throws Exception {
+		http.authorizeRequests().antMatchers("/rest/product/**").hasRole("USER")				
+		.and().formLogin()
+		.and().authorizeRequests().antMatchers("/rest/*").hasRole("MANAGER")		
+		.and().formLogin();							 
+	}
+	
 	@Override
-	@Autowired
-    protected void configure(AuthenticationManagerBuilder authManagerBuilder) throws Exception {
-        authManagerBuilder.inMemoryAuthentication()
-                .withUser("123").password("123").roles("USER");
-
-        authManagerBuilder.inMemoryAuthentication()
-                .withUser("manager").password("password").roles("MANAGER");
+    @Autowired
+    public void configure(AuthenticationManagerBuilder auth) throws Exception {
+        auth
+            .jdbcAuthentication()
+                .dataSource(dataSource())
+                .usersByUsernameQuery("select name,password,enabled from user where name = ?")
+        
+        .authoritiesByUsernameQuery("select username,authority from authorities where username = ?").rolePrefix("ROLE_");
     }
 	
-	@Override
-	protected void configure(HttpSecurity http) throws Exception {
-		http.authorizeRequests().antMatchers("/rest/*").hasRole("USER").and().httpBasic();
-		http.authorizeRequests().antMatchers("/rest/client/**").hasRole("MANAGER").and().httpBasic();
-		 
-	}	 	 
+	@Bean
+	public BuyerRest buyerRest(){
+		return new BuyerRest();
+	}
 	
-	@Autowired
-	private BuyerRest buyerRest;
+	/*@Autowired
+	private BuyerRest buyerRest;*/
 	
 	@Autowired
 	private ProfitableClientsRest profitableClientsRest;
@@ -101,7 +110,7 @@ public class AppConfig extends WebSecurityConfigurerAdapter{
 	@DependsOn("cxf")
     public Server jaxRsServer() {
         JAXRSServerFactoryBean factory = RuntimeDelegate.getInstance().createEndpoint(jaxRsApiApplication(), JAXRSServerFactoryBean.class);
-        factory.setServiceBean(buyerRest);
+        factory.setServiceBean(buyerRest());
         factory.setServiceBean(profitableClientsRest);
         factory.setServiceBean(storeRest);
         factory.setAddress("/rest"+ factory.getAddress());
@@ -109,7 +118,7 @@ public class AppConfig extends WebSecurityConfigurerAdapter{
         return factory.create();
     }
 	
-	/*@Bean
+	@Bean
 	public DataSource dataSource(){
       DriverManagerDataSource dataSource = new DriverManagerDataSource();
       dataSource.setDriverClassName("com.mysql.jdbc.Driver");
@@ -119,7 +128,7 @@ public class AppConfig extends WebSecurityConfigurerAdapter{
       return dataSource;
 	}
 	
-	@Bean
+	/*@Bean
 	public PersistenceExceptionTranslationPostProcessor exceptionTranslation(){
 		return new PersistenceExceptionTranslationPostProcessor();
 	}
