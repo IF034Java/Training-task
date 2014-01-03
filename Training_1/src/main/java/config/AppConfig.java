@@ -58,11 +58,12 @@ public class AppConfig extends WebSecurityConfigurerAdapter{
                 .withUser("manager").password("password").roles("MANAGER");
     }
 	
-	/*@Override
+	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-		http.authorizeRequests().antMatchers("/rest/**").hasRole("USER").anyRequest().authenticated().and().formLogin();		 
+		http.authorizeRequests().antMatchers("/rest/*").hasRole("USER").and().httpBasic();
+		http.authorizeRequests().antMatchers("/rest/client/**").hasRole("MANAGER").and().httpBasic();
 		 
-	}*/	 	 
+	}	 	 
 	
 	@Autowired
 	private BuyerRest buyerRest;
