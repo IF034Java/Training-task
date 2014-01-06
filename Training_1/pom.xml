@@ -190,10 +190,22 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.8.2</version>
-            <scope>test</scope>
+            <version>4.8.2</version>            
         </dependency>
-
+        
+        <dependency>
+			<groupId>junit-addons</groupId>
+			<artifactId>junit-addons</artifactId>
+			<version>1.4</version>
+		</dependency>
+            
+        
+        <dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-all</artifactId>
+			<version>1.9.5</version>
+		</dependency>
+            
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
@@ -251,6 +263,7 @@
                 <configuration>
                     <includes>
                         <include>**/*Tests.java</include>
+                        <include>**/*Test.java</include>                                               
                     </includes>
                 </configuration>
             </plugin>
