@@ -3,8 +3,6 @@ package facade.impl;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.ws.rs.core.Response;
-
 import junit.framework.Assert;
 
 import org.junit.Before;
@@ -16,13 +14,12 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import service.ProductService;
 import dto.ClientDto;
 import dto.ProductDto;
 import entity.Client;
 import entity.Product;
 import fixture.Entity;
-import service.ClientService;
-import service.ProductService;
 
 @RunWith(MockitoJUnitRunner.class)
 public class StoreRestServiceImplTest {
