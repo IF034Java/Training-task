@@ -9,8 +9,8 @@ import dto.ProductDto;
 import entity.Client;
 import entity.Product;
 
-public interface StoreRestService {
-    List<ClientDto> clientDtoMapper(List<Client> clients);
+public interface StoreRestServiceFacade {
+//    List<ClientDto> clientDtoMapper(List<Client> clients);
 
     ProductDto getProduct(String productId);
 

@@ -18,7 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 
 import dto.ClientDto;
-import facade.BuyerRestService;
+import facade.BuyerRestServiceFacade;
 
 @Path("/client")
 public class BuyerRest {
@@ -26,34 +26,34 @@ public class BuyerRest {
     private final static Logger LOGGER = LoggerFactory.getLogger(BuyerRest.class);
 
     @Autowired
-    private BuyerRestService buyerRestService;
+    private BuyerRestServiceFacade buyerRestServiceFacade;
 
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ClientDto getClient(@PathParam("id") String clientId) {
-        LOGGER.trace("get client " + buyerRestService.getClient(clientId));
-        return buyerRestService.getClient(clientId);
+        LOGGER.trace("get client " + buyerRestServiceFacade.getClient(clientId));
+        return buyerRestServiceFacade.getClient(clientId);
     }
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public List<ClientDto> getAllClients() {
-        return buyerRestService.getAllClients();
+        return buyerRestServiceFacade.getAllClients();
     }
 
     @DELETE
     @Path("/{id}")
     public Response deleteClient(@PathParam("id") String clientId) {
-        return buyerRestService.deleteClient(clientId);
+        return buyerRestServiceFacade.deleteClient(clientId);
     }
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     public Response addClient(ClientDto clientDto) {
     	Response.Status status = null;    	
-    	if (buyerRestService.addClient(clientDto) == null){
+    	if (buyerRestServiceFacade.addClient(clientDto) == null){
     		status = Response.Status.UNAUTHORIZED;
     	} else {
     		status =Response.Status.ACCEPTED;

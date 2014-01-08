@@ -13,15 +13,16 @@ import org.springframework.transaction.annotation.Transactional;
 
 import service.ClientService;
 import service.ProductService;
+import utils.DtoMapper;
 import dto.ClientDto;
 import dto.ProductDto;
 import entity.Client;
 import entity.Product;
-import facade.StoreRestService;
+import facade.StoreRestServiceFacade;
 
 @Transactional
 @Component
-public class StoreRestServiceImpl implements StoreRestService {
+public class StoreRestServiceFacadeImpl implements StoreRestServiceFacade {
 
     @Autowired
     private ProductService productService;
@@ -31,17 +32,7 @@ public class StoreRestServiceImpl implements StoreRestService {
 
     ModelMapper mapper = new ModelMapper();
     
-    @Override
-    public List<ClientDto> clientDtoMapper(List<Client> clients){
-    	ModelMapper mapper = new ModelMapper();
-    	List<ClientDto> clientDtos = new LinkedList<ClientDto>();
-    	for (Client client: clients){
-    		ClientDto clientDto = mapper.map(client, ClientDto.class);
-    		clientDtos.add(clientDto);
-    	}
-    	
-    	return clientDtos;
-    }
+    DtoMapper<Client, ClientDto> dtoMapper = new DtoMapper<Client, ClientDto>(ClientDto.class);        
 
     @Override
     public ProductDto getProduct(String productId) {
@@ -50,7 +41,7 @@ public class StoreRestServiceImpl implements StoreRestService {
         	Product product = productService.getProduct((Integer.valueOf(productId)));
         	List<Client> clients = product.getClients();        
         	ProductDto productDto = mapper.map(product, ProductDto.class);
-        	productDto.setClientDtos(clientDtoMapper(clients));
+        	productDto.setClientDtos(dtoMapper.map(clients));
             return productDto;
         } else {
             return null;
@@ -64,7 +55,7 @@ public class StoreRestServiceImpl implements StoreRestService {
     	for(Product product: products){
     		List<Client> clients = product.getClients();    		
     		ProductDto productDto = mapper.map(product, ProductDto.class);
-    		productDto.setClientDtos(clientDtoMapper(clients));
+    		productDto.setClientDtos(dtoMapper.map(clients));
     		productDtos.add(productDto);
     	}
         return productDtos;

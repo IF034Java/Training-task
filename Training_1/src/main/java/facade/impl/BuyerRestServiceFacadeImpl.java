@@ -13,15 +13,16 @@ import org.springframework.transaction.annotation.Transactional;
 
 import service.ClientService;
 import service.ProductService;
+import utils.DtoMapper;
 import dto.ClientDto;
 import dto.ProductDto;
 import entity.Client;
 import entity.Product;
-import facade.BuyerRestService;
+import facade.BuyerRestServiceFacade;
 
 @Transactional
 @Component
-public class BuyerRestServiceImpl implements BuyerRestService {
+public class BuyerRestServiceFacadeImpl implements BuyerRestServiceFacade {
 
     @Autowired
     private ClientService clientService;
@@ -31,17 +32,7 @@ public class BuyerRestServiceImpl implements BuyerRestService {
     
     ModelMapper mapper = new ModelMapper();
     
-    @Override
-    public List<ProductDto> productDtoMapper(List<Product> products){
-    	ModelMapper mapper = new ModelMapper();
-    	List<ProductDto> productDtos = new LinkedList<ProductDto>();
-    	for (Product product : products){
-    		ProductDto productDto = mapper.map(product, ProductDto.class);    		
-    		productDtos.add(productDto);    		
-    	}
-    	
-    	return productDtos;
-    }
+    DtoMapper<Product, ProductDto> dtoMapper = new DtoMapper<Product, ProductDto>(ProductDto.class);    
 
     @Override
     public ClientDto getClient(String clientId) {
@@ -50,7 +41,7 @@ public class BuyerRestServiceImpl implements BuyerRestService {
         	Client client = clientService.getClient(Integer.valueOf(clientId));
         	List<Product> products = client.getProducts();
         	ClientDto clientDto = mapper.map(client, ClientDto.class);
-        	clientDto.setProductDtos(productDtoMapper(products));
+        	clientDto.setProductDtos(dtoMapper.map(products));
             return clientDto;
         } else {
             return null;
@@ -66,7 +57,7 @@ public class BuyerRestServiceImpl implements BuyerRestService {
         for(Client client: clients){
             List<Product> products = client.getProducts();
             ClientDto clientDto = mapper.map(client, ClientDto.class);
-            clientDto.setProductDtos(productDtoMapper(products));
+            clientDto.setProductDtos(dtoMapper.map(products));
             clientDtos.add(clientDto);
         }
         return clientDtos;
@@ -114,7 +105,7 @@ public class BuyerRestServiceImpl implements BuyerRestService {
         for(Client client: clients){
             List<Product> products = client.getProducts();
             ClientDto clientDto = mapper.map(client, ClientDto.class);
-            clientDto.setProductDtos(productDtoMapper(products));
+            clientDto.setProductDtos(dtoMapper.map(products));
             clientDtos.add(clientDto);
         }
         return clientDtos;			

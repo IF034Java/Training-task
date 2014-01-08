@@ -10,18 +10,18 @@ import javax.ws.rs.core.MediaType;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import dto.ClientDto;
-import facade.BuyerRestService;
+import facade.BuyerRestServiceFacade;
 
 @Path("/profitableClients")
 public class ProfitableClientsRest {
 	
 	@Autowired 
-	private BuyerRestService buyerRestService;
+	private BuyerRestServiceFacade buyerRestServiceFacade;
 	
 	@GET
     @Produces(MediaType.APPLICATION_JSON)
     public List<ClientDto> getProfitClients() {
-        return buyerRestService.getProfitableClients();
+        return buyerRestServiceFacade.getProfitableClients();
     }
 
 }

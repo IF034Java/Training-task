@@ -13,7 +13,7 @@ public class Entity {
 		Client client = new Client();
 		client.setName("Vitaliy");
 		client.setSurname("Kryzhalko");
-		client.setProfit(12.12);
+		client.setProfit(112.12);
 		client.setProducts(new LinkedList<Product>());
 		
 		return client;
@@ -23,7 +23,7 @@ public class Entity {
 		ClientDto clientDto = new ClientDto();
 		clientDto.setName("Vitaliy");
 		clientDto.setSurname("Kryzhalko");
-		clientDto.setProfit(12.12);
+		clientDto.setProfit(112.12);
 		clientDto.setProductDtos(new LinkedList<ProductDto>());
 		
 		return clientDto;
