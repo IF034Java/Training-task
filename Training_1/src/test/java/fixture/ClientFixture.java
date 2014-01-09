@@ -9,6 +9,7 @@ public class ClientFixture {
 	
 	public Client simpleClient(){
 		Client client = new Client();
+		client.setId(1);
 		client.setName("Vitaliy");
 		client.setSurname("Kryzhalko");
 		client.setProfit(112.12);

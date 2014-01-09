@@ -4,13 +4,10 @@ import java.util.List;
 
 import javax.ws.rs.core.Response;
 
-import dto.ClientDto;
 import dto.ProductDto;
-import entity.Client;
 import entity.Product;
 
-public interface StoreRestServiceFacade {
-//    List<ClientDto> clientDtoMapper(List<Client> clients);
+public interface StoreRestServiceFacade {    
 
     ProductDto getProduct(String productId);
 

@@ -9,6 +9,7 @@ public class ClientDtoFixture {
 	
 	public ClientDto simpleClientDto(){
 		ClientDto clientDto = new ClientDto();
+		clientDto.setId(1);
 		clientDto.setName("Vitaliy");
 		clientDto.setSurname("Kryzhalko");
 		clientDto.setProfit(112.12);

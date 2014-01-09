@@ -42,7 +42,7 @@ import rest.ProfitableClientsRest;
 import rest.StoreRest;
 
 @Configuration
-@ImportResource({"/WEB-INF/data.xml"})
+@ImportResource({"classpath:data.xml"})
 @ComponentScan(basePackages = {"facade.impl", "service.impl", "entity",  "repo"})
 //@EnableJpaRepositories("repo")
 //@EnableTransactionManagement

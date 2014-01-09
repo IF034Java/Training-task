@@ -9,6 +9,7 @@ public class ProductFixture {
 	
 	public Product simpleProduct(){
 		Product product = new Product();
+		product.setId(1);
 		product.setName("Bread");
 		product.setPrice(4.55);
 		product.setExpirationDate("25.12.2013");
