@@ -36,9 +36,9 @@ public class BuyerRestServiceFacadeImpl implements BuyerRestServiceFacade {
 
     @Override
     public ClientDto getClient(String clientId) {
-        if (clientService.isClientExist(Integer.valueOf(clientId))) {
+        if (clientService.isExist(Integer.valueOf(clientId))) {
         	ModelMapper mapper = new ModelMapper();
-        	Client client = clientService.getClient(Integer.valueOf(clientId));
+        	Client client = clientService.get(Integer.valueOf(clientId));
         	List<Product> products = client.getProducts();
         	ClientDto clientDto = mapper.map(client, ClientDto.class);
         	clientDto.setProductDtos(dtoMapper.map(products));
@@ -51,7 +51,7 @@ public class BuyerRestServiceFacadeImpl implements BuyerRestServiceFacade {
 
     @Override
     public List<ClientDto> getAllClients() {
-        List<Client> clients = clientService.getAllClients();
+        List<Client> clients = clientService.getAll();
         List<ClientDto> clientDtos = new LinkedList<ClientDto>();
         ModelMapper mapper = new ModelMapper();
         for(Client client: clients){
@@ -66,12 +66,12 @@ public class BuyerRestServiceFacadeImpl implements BuyerRestServiceFacade {
 
     @Override
     public Response deleteClient(String clientId) {
-        if (clientService.isClientExist(Integer.valueOf(clientId))) {
-        	List<Product> products = clientService.getClient(Integer.valueOf(clientId)).getProducts();
+        if (clientService.isExist(Integer.valueOf(clientId))) {
+        	List<Product> products = clientService.get(Integer.valueOf(clientId)).getProducts();
             for(Product product : products){
-                product.getClients().remove(clientService.getClient(Integer.valueOf(clientId)));
+                product.getClients().remove(clientService.get(Integer.valueOf(clientId)));
             }
-            clientService.deleteClient(Integer.valueOf(clientId));
+            clientService.delete(Integer.valueOf(clientId));
             return Response.status(Response.Status.OK).build();
         } else {
             return null;
@@ -88,13 +88,13 @@ public class BuyerRestServiceFacadeImpl implements BuyerRestServiceFacade {
     		for(ProductDto productDto : clientDto.getProductDtos()){
     			productDto.setClientDtos(clientDtos);
     			Product product = mapper.map(productDto, Product.class);
-    			productService.addProduct(product);
+    			productService.add(product);
     			products.add(product);
     		}
     	}
     	Client client = mapper.map(clientDto, Client.class);
     	client.setProducts(products);               
-        return clientService.addClient(client);
+        return clientService.add(client);
     }
 
 	@Override

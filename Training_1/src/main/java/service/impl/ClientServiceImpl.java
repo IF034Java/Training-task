@@ -18,32 +18,32 @@ public class ClientServiceImpl implements ClientService {
     private ClientRepository clientRepository;
 
     @Override
-    public Client addClient(Client client) {
+    public Client add(Client client) {
         return clientRepository.save(client);
     }
 
     @Override
-    public void deleteClient(Integer id) {
+    public void delete(Integer id) {
         clientRepository.delete(id);
     }
 
     @Override
-    public void deleteClient(Client client) {
+    public void delete(Client client) {
         clientRepository.delete(client);
     }
 
     @Override
-    public Client getClient(Integer id) {
+    public Client get(Integer id) {
         return clientRepository.findOne(id);
     }
 
     @Override
-    public List<Client> getAllClients() {
+    public List<Client> getAll() {
         return clientRepository.findAll();
     }
 
     @Override
-    public boolean isClientExist(int id) {
+    public boolean isExist(int id) {
         return clientRepository.exists(id);
     }
 

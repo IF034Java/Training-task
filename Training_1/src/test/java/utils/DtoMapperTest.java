@@ -11,34 +11,44 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import dto.ProductDto;
 import entity.Product;
-import fixture.ProductFixture;
 
 @RunWith(MockitoJUnitRunner.class)
 public class DtoMapperTest {
 	
-	private List<Product> products;
-	private List<ProductDto> productDtos;
-	private Product product;
+	private List<Product> products;	
+	private double delta;				
+	
 	
 	@Before
-	public void init(){
-		product = new ProductFixture().simpleProduct();
-		products = new LinkedList<Product>();
-		products.add(product);
+	public void init(){		
+		products = productsList();
+		delta = 0;
 	}
 	
 	@Test
 	public void mapTest(){
 		DtoMapper<Product, ProductDto> dtoMapper = new DtoMapper<Product, ProductDto>(ProductDto.class);
-		productDtos = dtoMapper.map(products);
-		Assert.assertTrue(products.size()==productDtos.size());
-		for(int i = 0; i<products.size(); i++){			
-			Assert.assertEquals(products.get(i).getId(), productDtos.get(i).getId());
-			Assert.assertEquals(products.get(i).getName(), productDtos.get(i).getName());
-			Assert.assertEquals(products.get(i).getPrice(), productDtos.get(i).getPrice());
-			Assert.assertEquals(products.get(i).getExpirationDate(), productDtos.get(i).getExpirationDate());
-		}
-	
+		List<ProductDto> productDtos = dtoMapper.map(products);		
+		int i = 0;
+		for (ProductDto productDto : productDtos) {			
+			Assert.assertEquals(2 + i, productDto.getId(), delta);
+			Assert.assertEquals("Milk" + i, productDto.getName());
+			Assert.assertEquals(8.13*i, productDto.getPrice(), delta);
+			Assert.assertEquals("30.03.14", productDto.getExpirationDate());
+			i++;			
+		}			
 	}
-
+	
+	private static List<Product> productsList(){
+		List<Product> products = new LinkedList<Product>();
+		for (int i = 0; i < 3; i++) {
+			Product product = new Product();
+			product.setId(2+i);
+			product.setName("Milk" + i);
+			product.setPrice(8.13*i);
+			product.setExpirationDate("30.03.14");			
+			products.add(product);			
+		} 
+		return products;
+	}			
 }

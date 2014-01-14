@@ -3,21 +3,24 @@ package service.impl;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import repo.ClientRepository;
 import service.ClientService;
 import config.AppConfigTest;
 import entity.Client;
-import fixture.ClientFixture;
+import entity.Product;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {AppConfigTest.class})
@@ -26,6 +29,12 @@ public class ClientServiceImplIT {
 		
 	private static Client simpleClient;
 	private static List<Client> inputedClients;
+	private static double delta;	
+	
+	private static final Integer ID = 1;
+	private static final double CLIENT_PROFIT = 112.12;
+	private static final String CLIENT_SURNAME = "Kryzhalko";
+	private static final String CLIENT_NAME = "Vitaliy";
 	
 	@Autowired
     private ClientService clientService;
@@ -33,99 +42,175 @@ public class ClientServiceImplIT {
 	@Autowired
 	private ClientRepository clientRepository;
 	
+	@PersistenceContext
+	 private EntityManager entityManager;		
+	
 	@BeforeClass
 	public static void initFixtures(){
-		simpleClient= new ClientFixture().simpleClient();
-		inputedClients = new LinkedList<Client>();
-		inputedClients.add(simpleClient);
-		
+		simpleClient= simpleClient();
+		inputedClients = clientsList();		
+		delta = 0;				
 	}
 	
 	@Test
 //	public Client addClient(Client client)
 	public void addClientTest(){
-		Client actualClient = clientService.addClient(simpleClient);
-		Assert.assertEquals(simpleClient.getName(), actualClient.getName());
-		Assert.assertEquals(simpleClient.getSurname(), actualClient.getSurname());
-		Assert.assertEquals(simpleClient.getProfit(), actualClient.getProfit());		
-	}
-	
-	@Test(expected = InvalidDataAccessApiUsageException.class)
-//	public Client addClient(Client client)
-	public void addClientExceptionTest(){
-		clientService.addClient(null);
-	}
+		clientService.add(simpleClient);
+		entityManager.flush();
+		Integer id = findClientId(simpleClient);
+		Client actualClient = clientRepository.findOne(id);
+		Assert.assertEquals(CLIENT_NAME, actualClient.getName());
+		Assert.assertEquals(CLIENT_SURNAME, actualClient.getSurname());
+		Assert.assertEquals(CLIENT_PROFIT, actualClient.getProfit(), delta);		
+		int i = 0;
+		for (Product product : actualClient.getProducts()) {			
+			Assert.assertEquals("Milk" + i, product.getName());
+			Assert.assertEquals(8.13*i, product.getPrice(), delta);
+			Assert.assertEquals("30.03.14", product.getExpirationDate());
+			i++;
+		}			
+	}	
 	
 	@Test
 //	public void deleteClient(Integer id)
 	public void deleteClientWithIdTest(){		
-		clientRepository.save(simpleClient);			
-		clientService.deleteClient(findClientId());
-		Assert.assertFalse(clientRepository.exists(findClientId()));		
+		clientRepository.save(simpleClient);
+		entityManager.flush();
+		clientService.delete(findClientId(simpleClient));
+		Assert.assertFalse(clientRepository.exists(findClientId(simpleClient)));		
 	}
 	
 	@Test
 //	public void deleteClient(Client client)
 	public void deleteClientTest(){		
-		clientRepository.save(simpleClient);		
-		clientService.deleteClient(simpleClient);
-		Assert.assertTrue(clientRepository.exists(findClientId()));		
+		clientRepository.save(simpleClient);
+		entityManager.flush();
+		Client client= simpleClient;
+		client.setId(findClientId(simpleClient));
+		clientService.delete(client);						
+		Assert.assertFalse(clientRepository.exists(findClientId(client)));		
 	}
 	
 	
 	@Test
 //	public Client getClient(Integer id)
 	public void getClientTest(){
-		clientRepository.save(simpleClient);		
-		Client actualClient = clientService.getClient(findClientId());		
-		Assert.assertEquals(simpleClient.getName(), actualClient.getName());
-		Assert.assertEquals(simpleClient.getSurname(), actualClient.getSurname());
-		Assert.assertEquals(simpleClient.getProfit(), actualClient.getProfit());	
+		clientRepository.save(simpleClient);
+		entityManager.flush();
+		Client actualClient = clientService.get(findClientId(simpleClient));
+		Assert.assertEquals(CLIENT_NAME, actualClient.getName());
+		Assert.assertEquals(CLIENT_SURNAME, actualClient.getSurname());
+		Assert.assertEquals(CLIENT_PROFIT, (double)actualClient.getProfit(), delta);
+		List<Product> products = actualClient.getProducts();
+		int i = 0;
+		for (Product product : products) {			
+			Assert.assertEquals("Milk" + i, product.getName());
+			Assert.assertEquals(8.13*i, (double)product.getPrice(), delta);
+			Assert.assertEquals("30.03.14", product.getExpirationDate());
+			i++;
+		}		
 	}
 	
 	@Test
 //	public List<Client> getAllClients()
 	public void getAllClientsTest(){
-		clientRepository.save(simpleClient);		
-		List<Client> actualClients = clientService.getAllClients();		
-		Assert.assertTrue(inputedClients.size()==actualClients.size());
-		
-		for (int i = 0; i<actualClients.size(); i++) {			
-			Assert.assertEquals(inputedClients.get(i).getName(), actualClients.get(i).getName());
-			Assert.assertEquals(inputedClients.get(i).getSurname(), actualClients.get(i).getSurname());
-			Assert.assertEquals(inputedClients.get(i).getProfit(), actualClients.get(i).getProfit());
+		clientRepository.save(inputedClients);		
+		List<Client> actualClients = clientService.getAll();		
+		int i = 0;
+		for (Client client : actualClients) {			
+			Assert.assertEquals("Vasyl"+ i, client.getName());
+			Assert.assertEquals("Vasylchenko" + 2*i, client.getSurname());
+			Assert.assertEquals((double)(200+i), client.getProfit(), delta);
+			i++;
+			int j = 0;
+			for (Product product : client.getProducts()) {			
+				Assert.assertEquals("Milk" + j, product.getName());
+				Assert.assertEquals(8.13*j, product.getPrice(), delta);
+				Assert.assertEquals("30.03.14", product.getExpirationDate());
+				j++;
+			}
 			
-		}
+		}			
 	}
 	
 	@Test
 //	public boolean isClientExist(int id)
 	public void isClientExistTest(){
-		Assert.assertFalse(clientService.isClientExist(findClientId()));
-		clientRepository.save(simpleClient);		
-		Assert.assertTrue(clientService.isClientExist(findClientId()));
+		Assert.assertFalse(clientService.isExist(findClientId(simpleClient)));
+		clientRepository.save(simpleClient);
+		entityManager.flush();
+		Assert.assertTrue(clientService.isExist(findClientId(simpleClient)));
 	}		
 	
 	@Test
 //	public List<Client> getProfitableClients()
 	public void getProfitableClientsTest(){
-		clientRepository.save(simpleClient);
+		List<Client> profitableClients = clientsList();
+		clientRepository.save(profitableClients);		
 		List<Client> actualClients = clientService.getProfitableClients();
-		Assert.assertTrue(inputedClients.size()==actualClients.size());
-		for (Client client : actualClients) {
-			Assert.assertTrue(client.getProfit()>100);
-		}
+		int i = 0;
+		for (Client client : actualClients) {			
+			Assert.assertEquals("Vasyl"+ i, client.getName());
+			Assert.assertEquals("Vasylchenko" + 2*i, client.getSurname());
+			Assert.assertEquals((double)(200+i), client.getProfit(), delta);
+			i++;
+			int j = 0;
+			for (Product product : client.getProducts()) {			
+				Assert.assertEquals("Milk" + j, product.getName());
+				Assert.assertEquals(8.13*j, product.getPrice(), delta);
+				Assert.assertEquals("30.03.14", product.getExpirationDate());
+				j++;
+			}
+			
+		}						
 	}
 	
-	private Integer findClientId(){
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
+	private Integer findClientId(Client searchingClient){		
 		Integer searchingId = 0;		
 		for (Client client : clientRepository.findAll()) {
-			if(client.getName().equals(simpleClient.getName())
-					&&client.getSurname().equals(simpleClient.getSurname())
-					&&client.getProfit()==simpleClient.getProfit()){
+			if(client.getName().equals(searchingClient.getName())
+					&&client.getSurname().equals(searchingClient.getSurname())
+					&&client.getProfit()==searchingClient.getProfit()){
 				searchingId = client.getId();
 			}
 		}		
 		return searchingId;
+	}
+	
+	private static List<Product> productsList(){
+		List<Product> products = new LinkedList<Product>();
+		for (int i = 0; i < 3; i++) {
+			Product product = new Product();
+			product.setName("Milk" + i);
+			product.setPrice(8.13*i);
+			product.setExpirationDate("30.03.14");
+			product.setClients(new LinkedList<Client>());
+			products.add(product);			
+		} 
+		return products;
+	}
+	
+	private static Client simpleClient(){
+		Client client = new Client();
+		client.setId(ID);
+		client.setName(CLIENT_NAME);
+		client.setSurname(CLIENT_SURNAME);
+		client.setProfit(CLIENT_PROFIT);
+		client.setProducts(new LinkedList<Product>());
+		return client;
+	}
+	
+	private static List<Client> clientsList(){
+		List<Client> clients = new LinkedList<Client>();
+		for (int i = 0; i < 3; i++) {
+			Client client = new Client();
+			client.setName("Vasyl"+ i);
+			client.setSurname("Vasylchenko" + 2*i);
+			client.setProfit((double)(200+i));
+			client.setProducts(productsList());
+			clients.add(client);
+		}		
+		return clients;
 	}
 }

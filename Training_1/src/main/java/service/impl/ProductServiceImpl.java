@@ -18,27 +18,27 @@ public class ProductServiceImpl implements ProductService {
     private ProductRepository productRepository;
 
     @Override
-    public Product addProduct(Product product) {
+    public Product add(Product product) {
         return productRepository.save(product);
     }
 
     @Override
-    public void deleteProduct(Integer id) {
+    public void delete(Integer id) {
         productRepository.delete(id);
     }
 
     @Override
-    public Product getProduct(Integer id) {
+    public Product get(Integer id) {
         return productRepository.findOne(id);
     }
 
     @Override
-    public List<Product> getAllProducts() {
+    public List<Product> getAll() {
         return productRepository.findAll();
     }
 
     @Override
-    public boolean isProductExist(int id) {
+    public boolean isExist(int id) {
         return productRepository.exists(id);
     }
 

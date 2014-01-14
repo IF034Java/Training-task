@@ -5,13 +5,13 @@ import entity.Product;
 import java.util.List;
 
 public interface ProductService {
-	Product addProduct(Product product);
+	Product add(Product product);
 
-    void deleteProduct(Integer id);
+    void delete(Integer id);
 
-    Product getProduct(Integer id);
+    Product get(Integer id);
 
-    List<Product> getAllProducts();
+    List<Product> getAll();
 
-    boolean isProductExist(int id);
+    boolean isExist(int id);
 }

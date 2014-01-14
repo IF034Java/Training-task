@@ -36,9 +36,9 @@ public class StoreRestServiceFacadeImpl implements StoreRestServiceFacade {
 
     @Override
     public ProductDto getProduct(String productId) {
-        if (productService.isProductExist(Integer.valueOf(productId))) {
+        if (productService.isExist(Integer.valueOf(productId))) {
         	ModelMapper mapper = new ModelMapper();
-        	Product product = productService.getProduct((Integer.valueOf(productId)));
+        	Product product = productService.get((Integer.valueOf(productId)));
         	List<Client> clients = product.getClients();        
         	ProductDto productDto = mapper.map(product, ProductDto.class);
         	productDto.setClientDtos(dtoMapper.map(clients));
@@ -50,7 +50,7 @@ public class StoreRestServiceFacadeImpl implements StoreRestServiceFacade {
 
     @Override
     public List<ProductDto> getAllProducts() {
-        List<Product> products = productService.getAllProducts();
+        List<Product> products = productService.getAll();
     	List<ProductDto> productDtos = new LinkedList<ProductDto>();
     	for(Product product: products){
     		List<Client> clients = product.getClients();    		
@@ -63,12 +63,12 @@ public class StoreRestServiceFacadeImpl implements StoreRestServiceFacade {
 
     @Override
     public Response deleteProduct(String productId) {
-        if (productService.isProductExist(Integer.valueOf(productId))) {
-        	List<Client> clients = productService.getProduct(Integer.valueOf(productId)).getClients();
+        if (productService.isExist(Integer.valueOf(productId))) {
+        	List<Client> clients = productService.get(Integer.valueOf(productId)).getClients();
             for(Client client : clients){
-            	client.getProducts().remove(productService.getProduct(Integer.valueOf(productId)));                
+            	client.getProducts().remove(productService.get(Integer.valueOf(productId)));                
             }
-            productService.deleteProduct(Integer.valueOf(productId));
+            productService.delete(Integer.valueOf(productId));
             return Response.status(Response.Status.OK).build();
         } else {
             return null;
@@ -84,12 +84,12 @@ public class StoreRestServiceFacadeImpl implements StoreRestServiceFacade {
     		for (ClientDto clientDto: productDto.getClientDtos()){
     			clientDto.setProductDtos(productDtos);
     			Client client = mapper.map(clientDto, Client.class);
-                clientService.addClient(client);
+                clientService.add(client);
     			clients.add(client);
     		}
     	}
         Product product = mapper.map(productDto, Product.class);
     	product.setClients(clients);
-        return productService.addProduct(product);
+        return productService.add(product);
     }
 }

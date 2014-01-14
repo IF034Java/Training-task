@@ -5,17 +5,17 @@ import entity.Client;
 import java.util.List;
 
 public interface ClientService {
-    Client addClient(Client client);
+    Client add(Client client);
 
-    void deleteClient(Integer id);
+    void delete(Integer id);
 
-    void deleteClient(Client client);
+    void delete(Client client);
 
-    Client getClient(Integer id);
+    Client get(Integer id);
 
-    List<Client> getAllClients();
+    List<Client> getAll();
 
-    boolean isClientExist(int id);
+    boolean isExist(int id);
     
     List<Client> getProfitableClients();
 }

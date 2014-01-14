@@ -3,6 +3,8 @@ package facade.impl;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.ws.rs.core.Response;
+
 import junit.framework.Assert;
 
 import org.junit.Before;
@@ -13,7 +15,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.stubbing.Answer;
 
 import service.ClientService;
 import service.ProductService;
@@ -21,23 +25,20 @@ import dto.ClientDto;
 import dto.ProductDto;
 import entity.Client;
 import entity.Product;
-import fixture.ClientDtoFixture;
-import fixture.ClientFixture;
-import fixture.ProductDtoFixture;
-import fixture.ProductFixture;
 
 @RunWith(MockitoJUnitRunner.class)
 public class BuyerRestServiceFacadeImplTest {
 	
+
 	private static Client client;
-	private static ClientDto clientDto;
-	private static Product product;
-	private static ProductDto productDto;
-	private static List<Client> clients;
-	private static List<ClientDto> clientDtos;
-	private static List<Product> products;
-	private static List<ProductDto> productDtos;
-	private boolean clientExist;	
+	private static ClientDto clientDto;	
+	private static List<Client> clients;			
+	
+	private static final double CLIENT_PROFIT = 112.12;
+	private static final String CLIENT_SURNAME = "Kryzhalko";
+	private static final String CLIENT_NAME = "Vitaliy";
+	private static Integer existingId = 1;
+	private static Integer notExistingId = -1;
 	
 	@Mock
 	private static ClientService clientService;
@@ -49,102 +50,172 @@ public class BuyerRestServiceFacadeImplTest {
 	private BuyerRestServiceFacadeImpl buyerRestServiceFacadeImpl;		
 	
 	@BeforeClass
-	public static void initInputs(){
-		client = new ClientFixture().simpleClient();
-		clientDto = new ClientDtoFixture().simpleClientDto();
-		product = new ProductFixture().simpleProduct();
-		productDto = new ProductDtoFixture().simpleProductDto();
-		clients = new LinkedList<Client>();
-		clients.add(client);
-		clientDtos = new LinkedList<ClientDto>();
-		clientDtos.add(clientDto);
-		products = new LinkedList<Product>();
-		products.add(product);
-		productDtos = new LinkedList<ProductDto>();
-		productDtos.add(productDto);		
+	public static void initInputs(){		
+		client = simpleClient();
+		clients = clientsList();											
+		clientDto = simpleClientDto();		
 	}
+	
 	
 	@Before
 	public void initMocks(){
 		MockitoAnnotations.initMocks(this);
-		clientExist = clientService.isClientExist(Integer.valueOf("1"));
+		mockClientService();
 	}
-	
+		
+	private void mockClientService(){
+		Mockito.when(clientService.isExist(existingId)).thenReturn(true);
+		Mockito.when(clientService.isExist(notExistingId)).thenReturn(false);
+		Mockito.when(clientService.get(existingId)).thenReturn(client);
+		Mockito.when(clientService.getAll()).thenReturn(clients);
+		Mockito.when(clientService.getProfitableClients()).thenReturn(clients);
+		Mockito.when(clientService.add(Mockito.any(Client.class))).thenAnswer(new Answer<Client>() {
+            @Override
+            public Client answer(InvocationOnMock invocation) throws Throwable {
+                Object[] args = invocation.getArguments();
+                return (Client) args[0];
+            }
+        });		
+	}
 	
 	@Test
 //	public ClientDto getClient(String clientId)
-	public void getExistingClientTest(){				
-		Mockito.when(clientExist).thenReturn(true);		
-		Mockito.when(clientService.getClient(Integer.valueOf(1))).thenReturn(client);
+	public void getExistingClientTest(){		
 		ClientDto actualClientDto = buyerRestServiceFacadeImpl.getClient("1");		
-		
-		Assert.assertEquals(client.getId(), actualClientDto.getId());
-		Assert.assertEquals(client.getName(), actualClientDto.getName());
-		Assert.assertEquals(client.getSurname(), actualClientDto.getSurname());
-		Assert.assertEquals(client.getProfit(), actualClientDto.getProfit());
-		
+		Assert.assertEquals(CLIENT_NAME, actualClientDto.getName());
+		Assert.assertEquals(CLIENT_SURNAME, actualClientDto.getSurname());
+		Assert.assertEquals(CLIENT_PROFIT, actualClientDto.getProfit());
+		Assert.assertEquals(existingId, actualClientDto.getId());
+		List<ProductDto> productDtos = actualClientDto.getProductDtos();
+		int i=0;
+		for (ProductDto productDto : productDtos) {						
+			Assert.assertEquals("Milk" + i, productDto.getName());
+			Assert.assertEquals(8.13*i, productDto.getPrice());
+			Assert.assertEquals("30.03.14", productDto.getExpirationDate());
+			i++;
+		}					
 	}
 	
 	@Test
 //	public ClientDto getClient(String clientId)
 	public void getNonExistingClientTest(){						
-		Mockito.when(clientService.isClientExist(Mockito.anyInt())).thenReturn(false);				
-		Assert.assertNull(buyerRestServiceFacadeImpl.getClient("1"));		
+		Assert.assertNull(buyerRestServiceFacadeImpl.getClient("-1"));		
 	}
 	
 	@Test
 //	public List<ClientDto> getAllClients() {
 	public void getAllClients(){
-		Mockito.when(clientService.getAllClients()).thenReturn(clients);
-		List<ClientDto> actualClientDtos = buyerRestServiceFacadeImpl.getAllClients();
-		
-		Assert.assertTrue(clients.size()==actualClientDtos.size());						
-		for (int i = 0; i<actualClientDtos.size(); i++){
-			Assert.assertEquals(clients.get(i).getId(), actualClientDtos.get(i).getId());
-			Assert.assertEquals(clients.get(i).getName(), actualClientDtos.get(i).getName());
-			Assert.assertEquals(clients.get(i).getSurname(), actualClientDtos.get(i).getSurname());
-			Assert.assertEquals(clients.get(i).getProfit(), actualClientDtos.get(i).getProfit());
+		List<ClientDto> actualClientDtos = buyerRestServiceFacadeImpl.getAllClients();														
+		int i=0;
+		for (ClientDto dto: actualClientDtos){
+			Assert.assertEquals("Vasyl"+ i, dto.getName());
+			Assert.assertEquals("Vasylchenko"+ 2*i, dto.getSurname());
+			Assert.assertEquals((double)(200+i), dto.getProfit());
+			i++;
+			int j=0;
+			for(ProductDto productDto: dto.getProductDtos()){
+				Assert.assertEquals("Milk" + j, productDto.getName());
+				Assert.assertEquals(8.13*j, productDto.getPrice());
+				Assert.assertEquals("30.03.14", productDto.getExpirationDate());
+				j++;
+			}
 		}
 	}
 	
 	@Test
 //	public Response deleteClient(String clientId)
 	public void deleteExistingClientTest(){		
-		int status = 200;		
-		Mockito.when(clientExist).thenReturn(true);
-		Mockito.when(clientService.getClient(Integer.valueOf("1"))).thenReturn(client);		
-		Assert.assertEquals(status, buyerRestServiceFacadeImpl.deleteClient("1").getStatus());					
+		Response response = buyerRestServiceFacadeImpl.deleteClient(client.getId().toString());
+		Assert.assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());					
 	}
 	
 	@Test
 //	public Response deleteClient(String clientId)
 	public void deleteNonExistingClientTest(){		
-		Mockito.when(clientExist).thenReturn(false);						
-		Assert.assertNull(buyerRestServiceFacadeImpl.deleteClient("1"));		
+		Assert.assertNull(buyerRestServiceFacadeImpl.deleteClient("-1"));		
 	}
 	
 	@Test
 //	public Client addClient(ClientDto clientDto)
 	public void addClientTest(){		
-		Mockito.when(clientService.addClient(client)).thenReturn(client);
-		Mockito.when(productService.addProduct(product)).thenReturn(product);
-		Client actualClient = buyerRestServiceFacadeImpl.addClient(clientDto);		
-		
-		Assert.assertEquals(clientDto.getId(), actualClient.getId());
-		Assert.assertEquals(clientDto.getName(), actualClient.getName());
-		Assert.assertEquals(clientDto.getSurname(), actualClient.getSurname());
-		Assert.assertEquals(clientDto.getProfit(), actualClient.getProfit());
+		Client actualClient = buyerRestServiceFacadeImpl.addClient(clientDto);				
+		Assert.assertEquals(CLIENT_NAME, actualClient.getName());
+		Assert.assertEquals(CLIENT_SURNAME, actualClient.getSurname());
+		Assert.assertEquals(CLIENT_PROFIT, actualClient.getProfit());
+		Assert.assertEquals(existingId, actualClient.getId());
+		List<Product> products = actualClient.getProducts();
+		int i=0;
+		for (Product product : products) {						
+			Assert.assertEquals("Milk" + i, product.getName());
+			Assert.assertEquals(8.13*i, product.getPrice());
+			Assert.assertEquals("30.03.14", product.getExpirationDate());
+			i++;
+		}									
 	}
 	
 	@Test
 //	public List<ClientDto> getProfitableClients()
-	public void getProfitableClientsTest() {
-		Mockito.when(clientService.getProfitableClients()).thenReturn(clients);
-		List<ClientDto> actualProfitableClientDtos = buyerRestServiceFacadeImpl.getProfitableClients();		
-			
-			Assert.assertTrue(clients.size()==actualProfitableClientDtos.size());
-			for(ClientDto clientDto : actualProfitableClientDtos){
-				Assert.assertTrue(clientDto.getProfit()>100);
-			}				
+	public void getProfitableClientsTest() {		
+		List<ClientDto> actualProfitableClientDtos = buyerRestServiceFacadeImpl.getProfitableClients();
+		int i=0;
+		for (ClientDto dto: actualProfitableClientDtos){
+			Assert.assertEquals("Vasyl"+ i, dto.getName());
+			Assert.assertEquals("Vasylchenko"+ 2*i, dto.getSurname());
+			Assert.assertEquals((double)(200+i), dto.getProfit());
+			i++;
+			int j=0;
+			for(ProductDto productDto: dto.getProductDtos()){
+				Assert.assertEquals("Milk" + j, productDto.getName());
+				Assert.assertEquals(8.13*j, productDto.getPrice());
+				Assert.assertEquals("30.03.14", productDto.getExpirationDate());
+				j++;
+			}
+		}
+	}		
+	
+	private static List<Client> clientsList(){
+		List<Client> clients = new LinkedList<Client>();
+		for (int i = 0; i < 3; i++) {
+			Client client = new Client();
+			client.setName("Vasyl"+ i);
+			client.setSurname("Vasylchenko" + 2*i);
+			client.setProfit((double)(200+i));
+			client.setProducts(new LinkedList<Product>());
+			clients.add(client);
+		}		
+		return clients;
 	}
+	
+	private static List<Product> productsList(){
+		List<Product> products = new LinkedList<Product>();
+		for (int i = 0; i < 3; i++) {
+			Product product = new Product();
+			product.setName("Milk" + i);
+			product.setPrice(8.13*i);
+			product.setExpirationDate("30.03.14");
+			product.setClients(new LinkedList<Client>());
+			products.add(product);			
+		} 
+		return products;
+	}
+	
+	private static Client simpleClient(){
+		Client client = new Client();
+		client.setId(existingId);
+		client.setName(CLIENT_NAME);
+		client.setSurname(CLIENT_SURNAME);
+		client.setProfit(CLIENT_PROFIT);
+		client.setProducts(productsList());
+		return client;
+	}
+	
+	private static ClientDto simpleClientDto(){
+		ClientDto dto = new ClientDto();
+		dto.setId(existingId);
+		dto.setName(CLIENT_NAME);
+		dto.setSurname(CLIENT_SURNAME);
+		dto.setProfit(CLIENT_PROFIT);
+		dto.setProductDtos(new LinkedList<ProductDto>());
+		return dto;
+	}		
 }
