@@ -17,14 +17,14 @@ import org.springframework.transaction.annotation.Transactional;
 
 import repo.ProductRepository;
 import service.ProductService;
-import config.AppConfigTest;
+import config.AppConfig;
 import entity.Client;
 import entity.Product;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = {AppConfigTest.class})
+@ContextConfiguration(classes = {AppConfig.class})
 @Transactional
-public class ProductServiceImplIT {
+public class ProductServiceImplTest {
 	
 	private static Product simpleProduct;
 	private static List<Product> inputedProducts;
@@ -128,7 +128,7 @@ public class ProductServiceImplIT {
 		entityManager.flush();
 		Assert.assertTrue(productService.isExist(findProductId(simpleProduct)));		
 	}
-		
+			
 	private Integer findProductId(Product searchingProduct){
 		Integer searchingId = 0;		
 		for (Product product : productRepository.findAll()) {

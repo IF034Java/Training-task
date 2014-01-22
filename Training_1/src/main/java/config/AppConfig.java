@@ -1,5 +1,11 @@
 package config;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.Properties;
+
+import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
@@ -16,27 +22,38 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.ImportResource;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.env.Environment;
+import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
+import org.springframework.orm.jpa.JpaTransactionManager;
+import org.springframework.orm.jpa.JpaVendorAdapter;
+import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
+import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import rest.BuyerRest;
 import rest.ProfitableClientsRest;
 import rest.StoreRest;
 
 @Configuration
-@ImportResource({"classpath:data.xml"})
+//@ImportResource({"classpath:data.xml"})
 @ComponentScan(basePackages = {"facade.impl", "service.impl", "entity",  "repo"})
-//@EnableJpaRepositories("repo")
-//@EnableTransactionManagement
-@EnableWebSecurity
-@EnableGlobalMethodSecurity(prePostEnabled = true)
-public class AppConfig extends WebSecurityConfigurerAdapter{		
+@EnableJpaRepositories("repo")
+@EnableTransactionManagement
+//@EnableWebSecurity
+//@EnableGlobalMethodSecurity(prePostEnabled = true)
+@PropertySource("classpath:${PROPERTY_FILE_NAME:jdbc}.properties")
+public class AppConfig /*extends WebSecurityConfigurerAdapter*/{		
 	
-	@Override	
+	/*@Override	
 	protected void configure(HttpSecurity http) throws Exception {
 		http.authorizeRequests().antMatchers("/rest/product/**").hasRole("USER")				
 		.and().formLogin()
@@ -53,7 +70,10 @@ public class AppConfig extends WebSecurityConfigurerAdapter{
                 .usersByUsernameQuery("select name,password,enabled from user where name = ?")
         
         .authoritiesByUsernameQuery("select username,authority from authorities where username = ?").rolePrefix("ROLE_");
-    }
+    }*/
+	
+	@Autowired
+	private Environment environment;
 	
 	@Bean
 	public BuyerRest buyerRest(){
@@ -106,16 +126,16 @@ public class AppConfig extends WebSecurityConfigurerAdapter{
     }
 	
 	@Bean
-	public DataSource dataSource(){
-      DriverManagerDataSource dataSource = new DriverManagerDataSource();
-      dataSource.setDriverClassName("com.mysql.jdbc.Driver");
-      dataSource.setUrl("jdbc:mysql://localhost:3306/training1");
-      dataSource.setUsername( "training" );
-      dataSource.setPassword( "training" );
-      return dataSource;
+	public DataSource dataSource(){		
+		DriverManagerDataSource dataSource = new DriverManagerDataSource();
+		dataSource.setDriverClassName(environment.getProperty("dbDriver"));
+		dataSource.setUrl(environment.getProperty("dbUrl"));
+		dataSource.setUsername( environment.getProperty("login") );
+		dataSource.setPassword( environment.getProperty("password") );
+		return dataSource;
 	}
 	
-	/*@Bean
+	@Bean
 	public PersistenceExceptionTranslationPostProcessor exceptionTranslation(){
 		return new PersistenceExceptionTranslationPostProcessor();
 	}
@@ -146,6 +166,6 @@ public class AppConfig extends WebSecurityConfigurerAdapter{
 	      transactionManager.setEntityManagerFactory(emf);
 	 
 	      return transactionManager;
-	   }*/
+	   }
 	    		
 }

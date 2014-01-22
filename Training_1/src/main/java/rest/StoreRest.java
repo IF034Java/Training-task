@@ -38,9 +38,8 @@ public class StoreRest {
 
     @DELETE
     @Path("/{id}")
-    public Response deleteProduct(@PathParam("id") String productId) {
-    	storeRestServiceFacade.deleteProduct(productId);
-        return Response.status(Response.Status.OK).build();
+    public Response deleteProduct(@PathParam("id") String productId) {    	
+        return storeRestServiceFacade.deleteProduct(productId);
     }
 
     @POST
@@ -48,7 +47,7 @@ public class StoreRest {
     public Response addProduct(ProductDto productDto) {
     	Response.Status status = null;    	
     	if (storeRestServiceFacade.addProduct(productDto) == null){
-    		status = Response.Status.UNAUTHORIZED;
+    		status = Response.Status.NO_CONTENT;
     	} else {
     		status =Response.Status.ACCEPTED;
     	}

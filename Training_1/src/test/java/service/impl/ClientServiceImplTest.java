@@ -13,19 +13,18 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import repo.ClientRepository;
 import service.ClientService;
-import config.AppConfigTest;
+import config.AppConfig;
 import entity.Client;
 import entity.Product;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = {AppConfigTest.class})
+@ContextConfiguration(classes = {AppConfig.class})
 @Transactional
-public class ClientServiceImplIT {
+public class ClientServiceImplTest {
 		
 	private static Client simpleClient;
 	private static List<Client> inputedClients;
@@ -164,8 +163,7 @@ public class ClientServiceImplIT {
 			
 		}						
 	}
-	
-	@Transactional(propagation = Propagation.REQUIRES_NEW)
+		
 	private Integer findClientId(Client searchingClient){		
 		Integer searchingId = 0;		
 		for (Client client : clientRepository.findAll()) {

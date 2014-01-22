@@ -5,7 +5,7 @@ import java.util.List;
 
 import javax.ws.rs.core.Response;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -37,6 +37,7 @@ public class BuyerRestServiceFacadeImplTest {
 	private static final double CLIENT_PROFIT = 112.12;
 	private static final String CLIENT_SURNAME = "Kryzhalko";
 	private static final String CLIENT_NAME = "Vitaliy";
+	private static final double DELTA = 0.01;
 	private static Integer existingId = 1;
 	private static Integer notExistingId = -1;
 	
@@ -84,13 +85,13 @@ public class BuyerRestServiceFacadeImplTest {
 		ClientDto actualClientDto = buyerRestServiceFacadeImpl.getClient("1");		
 		Assert.assertEquals(CLIENT_NAME, actualClientDto.getName());
 		Assert.assertEquals(CLIENT_SURNAME, actualClientDto.getSurname());
-		Assert.assertEquals(CLIENT_PROFIT, actualClientDto.getProfit());
+		Assert.assertEquals(CLIENT_PROFIT, actualClientDto.getProfit(), DELTA);
 		Assert.assertEquals(existingId, actualClientDto.getId());
 		List<ProductDto> productDtos = actualClientDto.getProductDtos();
 		int i=0;
 		for (ProductDto productDto : productDtos) {						
 			Assert.assertEquals("Milk" + i, productDto.getName());
-			Assert.assertEquals(8.13*i, productDto.getPrice());
+			Assert.assertEquals(8.13*i, productDto.getPrice(), DELTA);
 			Assert.assertEquals("30.03.14", productDto.getExpirationDate());
 			i++;
 		}					
@@ -110,12 +111,12 @@ public class BuyerRestServiceFacadeImplTest {
 		for (ClientDto dto: actualClientDtos){
 			Assert.assertEquals("Vasyl"+ i, dto.getName());
 			Assert.assertEquals("Vasylchenko"+ 2*i, dto.getSurname());
-			Assert.assertEquals((double)(200+i), dto.getProfit());
+			Assert.assertEquals((double)(200+i), dto.getProfit(), DELTA);
 			i++;
 			int j=0;
 			for(ProductDto productDto: dto.getProductDtos()){
 				Assert.assertEquals("Milk" + j, productDto.getName());
-				Assert.assertEquals(8.13*j, productDto.getPrice());
+				Assert.assertEquals(8.13*j, productDto.getPrice(), DELTA);
 				Assert.assertEquals("30.03.14", productDto.getExpirationDate());
 				j++;
 			}
@@ -141,13 +142,13 @@ public class BuyerRestServiceFacadeImplTest {
 		Client actualClient = buyerRestServiceFacadeImpl.addClient(clientDto);				
 		Assert.assertEquals(CLIENT_NAME, actualClient.getName());
 		Assert.assertEquals(CLIENT_SURNAME, actualClient.getSurname());
-		Assert.assertEquals(CLIENT_PROFIT, actualClient.getProfit());
+		Assert.assertEquals(CLIENT_PROFIT, actualClient.getProfit(), DELTA);
 		Assert.assertEquals(existingId, actualClient.getId());
 		List<Product> products = actualClient.getProducts();
 		int i=0;
 		for (Product product : products) {						
 			Assert.assertEquals("Milk" + i, product.getName());
-			Assert.assertEquals(8.13*i, product.getPrice());
+			Assert.assertEquals(8.13*i, product.getPrice(), DELTA);
 			Assert.assertEquals("30.03.14", product.getExpirationDate());
 			i++;
 		}									
@@ -161,12 +162,12 @@ public class BuyerRestServiceFacadeImplTest {
 		for (ClientDto dto: actualProfitableClientDtos){
 			Assert.assertEquals("Vasyl"+ i, dto.getName());
 			Assert.assertEquals("Vasylchenko"+ 2*i, dto.getSurname());
-			Assert.assertEquals((double)(200+i), dto.getProfit());
+			Assert.assertEquals((double)(200+i), dto.getProfit(), DELTA);
 			i++;
 			int j=0;
 			for(ProductDto productDto: dto.getProductDtos()){
 				Assert.assertEquals("Milk" + j, productDto.getName());
-				Assert.assertEquals(8.13*j, productDto.getPrice());
+				Assert.assertEquals(8.13*j, productDto.getPrice(), DELTA);
 				Assert.assertEquals("30.03.14", productDto.getExpirationDate());
 				j++;
 			}

@@ -5,7 +5,7 @@ import java.util.List;
 
 import javax.ws.rs.core.Response;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -37,6 +37,7 @@ public class StoreRestServiceFacadeImplTest {
 	private static final String PRODUCT_NAME = "Bread";
 	private static final double PRODUCT_PRICE = 4.25;
 	private static final String PRODUCT_EXPARATION_DATE = "30.03.14";
+	private static final double DELTA = 0.01;
 	private static Integer existingId = 1;
 	private static Integer notExistingId = -1;
 	
@@ -83,14 +84,14 @@ public class StoreRestServiceFacadeImplTest {
 	public void getExistingProductTest(){			
 		ProductDto actualProductDto = storeRestServiceFacadeImpl.getProduct("1");
 		Assert.assertEquals(PRODUCT_NAME, actualProductDto.getName());
-		Assert.assertEquals(PRODUCT_PRICE, actualProductDto.getPrice());
+		Assert.assertEquals(PRODUCT_PRICE, actualProductDto.getPrice(), DELTA);
 		Assert.assertEquals(PRODUCT_EXPARATION_DATE, actualProductDto.getExpirationDate());
 		List<ClientDto> clientDtos = actualProductDto.getClientDtos();
 		int i = 0;
 		for (ClientDto clientDto : clientDtos) {			
 			Assert.assertEquals("Vasyl"+ i, clientDto.getName());
 			Assert.assertEquals("Vasylchenko" + 2*i, clientDto.getSurname());
-			Assert.assertEquals((double)(200+i), clientDto.getProfit());			
+			Assert.assertEquals((double)(200+i), clientDto.getProfit(), DELTA);			
 			i++;
 		}							
 	}
@@ -108,7 +109,7 @@ public class StoreRestServiceFacadeImplTest {
 		int i=0;
 		for (ProductDto productDto : actualProductDtos) {
 			Assert.assertEquals("Milk" + i, productDto.getName());
-			Assert.assertEquals(8.13*i, productDto.getPrice());
+			Assert.assertEquals(8.13*i, productDto.getPrice(), DELTA);
 			Assert.assertEquals("30.03.14", productDto.getExpirationDate());
 			i++;
 			int j=0;
@@ -139,13 +140,13 @@ public class StoreRestServiceFacadeImplTest {
 	public void addProductTest(){					
 		Product actualProduct = storeRestServiceFacadeImpl.addProduct(productDto);
 		Assert.assertEquals(PRODUCT_NAME, actualProduct.getName());
-		Assert.assertEquals(PRODUCT_PRICE, actualProduct.getPrice());
+		Assert.assertEquals(PRODUCT_PRICE, actualProduct.getPrice(), DELTA);
 		Assert.assertEquals(PRODUCT_EXPARATION_DATE, actualProduct.getExpirationDate());
 		int i = 0;
 		for (Client client : clients) {			
 			Assert.assertEquals("Vasyl"+ i, client.getName());
 			Assert.assertEquals("Vasylchenko" + 2*i, client.getSurname());
-			Assert.assertEquals((double)(200+i), client.getProfit());			
+			Assert.assertEquals((double)(200+i), client.getProfit(), DELTA);			
 			i++;
 		}							
 	}		

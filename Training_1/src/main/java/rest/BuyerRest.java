@@ -31,7 +31,7 @@ public class BuyerRest {
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+//    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ClientDto getClient(@PathParam("id") String clientId) {
         LOGGER.trace("get client " + buyerRestServiceFacade.getClient(clientId));
         return buyerRestServiceFacade.getClient(clientId);
@@ -54,7 +54,7 @@ public class BuyerRest {
     public Response addClient(ClientDto clientDto) {
     	Response.Status status = null;    	
     	if (buyerRestServiceFacade.addClient(clientDto) == null){
-    		status = Response.Status.UNAUTHORIZED;
+    		status = Response.Status.NO_CONTENT;
     	} else {
     		status =Response.Status.ACCEPTED;
     	}
