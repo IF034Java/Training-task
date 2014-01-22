@@ -8,11 +8,11 @@ import static org.junit.Assert.assertEquals;
 import javax.servlet.http.HttpServletResponse;
 
 import org.json.simple.JSONObject;
-import org.junit.FixMethodOrder;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.runners.MethodSorters;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import utils.DbCreator;
 
 import com.jayway.restassured.http.ContentType;
 import com.jayway.restassured.response.Response;
@@ -20,19 +20,22 @@ import com.jayway.restassured.response.Response;
 import dto.ClientDto;
 import dto.ProductDto;
 
-@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class StoreRestIT {
 	
 	private static final String BASE_URL = "http://localhost:8080/rest/product";
-	private static final double DELTA = 0.0;
+	private static final double DELTA = 0.01;
 	private static final String PRODUCT_EXPIRATION_DATE = "30.03.14";
 	private static final double PRODUCT_PRICE = 8.13;
 	private static final String PRODUCT_NAME = "Chocolate";
 	private static final double CLIENT_PROFIT = 200.0;
 	private static final String CLIENT_SURNAME = "Vartus";
-	private static final String CLIENT_NAME = "Igor";
-	public static final Logger logger = LoggerFactory.getLogger(StoreRestIT.class);
-
+	private static final String CLIENT_NAME = "Igor";	
+	
+	@BeforeClass
+	public static void initDb(){
+		DbCreator.restoreDb();
+	}
+	
 	@Test
 	// public ProductDto getProduct(@PathParam("id") String productId)
 	public void test1GetProductIT() {
@@ -82,28 +85,26 @@ public class StoreRestIT {
 	// public Response addProduct(ProductDto productDto)
 	public void test3AddProductIT() {		
 		JSONObject productJson = new JSONObject();
-		productJson.put("name", PRODUCT_NAME + "5");
-		productJson.put("price", PRODUCT_PRICE * 5.0);
+		productJson.put("name", PRODUCT_NAME + "6");
+		productJson.put("price", PRODUCT_PRICE *6.0);
 		productJson.put("expirationDate", PRODUCT_EXPIRATION_DATE);
 		String productJsonString = productJson.toJSONString();
 
 		given().contentType(ContentType.JSON).body(productJsonString).expect()
 				.statusCode(HttpServletResponse.SC_ACCEPTED).when()
-				.post(BASE_URL);		
+				.post(BASE_URL);
+		DbCreator.restoreDb();
 	}
 
 	@Test
 	// public Response deleteProduct(@PathParam("id") String productId)
 	public void test4DeleteProductIT() {
-		Response response = get(BASE_URL);
-		int searchingId = 0;
-		ProductDto[] productDtos = response.as(ProductDto[].class);
-		for (ProductDto productDto : productDtos) {
-			if(productDto.getName().equals(PRODUCT_NAME+"5")){
-				searchingId = productDto.getId();
-			}			
-		}
-		delete(BASE_URL + "/" + String.valueOf(searchingId)).then().assertThat().statusCode(HttpServletResponse.SC_OK);													
+		delete(BASE_URL + "/6").then().assertThat().statusCode(HttpServletResponse.SC_OK);
+		DbCreator.restoreDb();
+	}	
+	
+	@AfterClass
+	public  static void deleteDbData(){
+		DbCreator.createSchemaDb();
 	}
-		
 }

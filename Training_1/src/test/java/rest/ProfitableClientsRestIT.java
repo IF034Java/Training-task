@@ -5,7 +5,11 @@ import static org.junit.Assert.assertEquals;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
+
+import utils.DbCreator;
 
 import com.jayway.restassured.http.ContentType;
 import com.jayway.restassured.response.Response;
@@ -17,6 +21,11 @@ public class ProfitableClientsRestIT {
 	
 	private static final String URL = "http://localhost:8080/rest/profitableClients";
 	private static final double DELTA = 0.0; 		
+	
+	@BeforeClass
+	public static void initDb(){
+		DbCreator.restoreDb();
+	}
 	
 	@Test
 //	public List<ClientDto> getProfitClients()
@@ -42,6 +51,11 @@ public class ProfitableClientsRestIT {
 			
 		}		  	 		  		  			
 		
+	}
+	
+	@AfterClass
+	public static void deleteDbData(){
+		DbCreator.createSchemaDb();
 	}
 	
 }

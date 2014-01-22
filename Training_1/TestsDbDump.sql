@@ -64,7 +64,7 @@ CREATE TABLE `client` (
 
 LOCK TABLES `client` WRITE;
 /*!40000 ALTER TABLE `client` DISABLE KEYS */;
-INSERT INTO `client` VALUES (1,'Igor0',200,'Vartus0'),(2,'Igor1',201,'Vartus2'),(3,'Igor2',202,'Vartus4'),(4,'Igor3',203,'Vartus6'),(5,'Igor4',204,'Vartus8');
+INSERT INTO `client` VALUES (1,'Igor0',200,'Vartus0'),(2,'Igor1',201,'Vartus2'),(3,'Igor2',202,'Vartus4'),(4,'Igor3',203,'Vartus6'),(5,'Igor4',204,'Vartus8'),(6,'Igor5',205,'Vartus10');
 /*!40000 ALTER TABLE `client` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -117,7 +117,7 @@ CREATE TABLE `product` (
 
 LOCK TABLES `product` WRITE;
 /*!40000 ALTER TABLE `product` DISABLE KEYS */;
-INSERT INTO `product` VALUES (1,'30.03.14','Chocolate0',0),(2,'30.03.14','Chocolate1',8.13),(3,'30.03.14','Chocolate2',16.26),(4,'30.03.14','Chocolate3',24.39),(5,'30.03.14','Chocolate4',32.52);
+INSERT INTO `product` VALUES (1,'30.03.14','Chocolate0',0),(2,'30.03.14','Chocolate1',8.13),(3,'30.03.14','Chocolate2',16.26),(4,'30.03.14','Chocolate3',24.39),(5,'30.03.14','Chocolate4',32.52),(6,'30.03.14','Chocolate5',40.65);
 /*!40000 ALTER TABLE `product` ENABLE KEYS */;
 UNLOCK TABLES;
 
